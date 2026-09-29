@@ -17,6 +17,8 @@ import type { Witness } from "@shared/types.js";
 export const DEFAULT_VOICE_MODEL = process.env.LLM_VOICE_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
 export const DEFAULT_AUTHOR_MODEL = process.env.LLM_AUTHOR_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
 export const LLM_TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS ?? 30000);
+// Case authoring emits large JSON (dozens of facts + witnesses); free models need minutes.
+export const AUTHOR_TIMEOUT_MS = Number(process.env.AUTHOR_TIMEOUT_MS ?? 240000);
 
 export type OpencodeRunner = (args: { model: string; prompt: string; timeoutMs: number }) => Promise<string>;
 
@@ -103,6 +105,28 @@ export class OpencodeLLMClient implements LLMClient {
     private runner: OpencodeRunner = defaultOpencodeRunner,
     private timeoutMs: number = LLM_TIMEOUT_MS,
   ) {}
+
+  /** Raw completion for non-voice uses (case authoring). Still retries once. */
+  async complete(prompt: string, model?: string): Promise<string> {
+    return this.generate(prompt, model ?? DEFAULT_AUTHOR_MODEL);
+  }
+
+  /** AuthorTransport adapter: `client.author()` plugs straight into authorCase(). */
+  author(model: string = DEFAULT_AUTHOR_MODEL, timeoutMs: number = AUTHOR_TIMEOUT_MS): { complete: (prompt: string) => Promise<string> } {
+    return {
+      complete: async (prompt: string): Promise<string> => {
+        let lastErr: unknown;
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            return await this.runner({ model, prompt, timeoutMs });
+          } catch (e) {
+            lastErr = e;
+          }
+        }
+        throw lastErr;
+      },
+    };
+  }
 
   private async generate(prompt: string, model: string): Promise<string> {
     // One retry per spec §15, then caller falls back to stub.
