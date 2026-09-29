@@ -1,0 +1,30 @@
+{
+  "$comment": "P0-1: recorded Jev wire-format sample. NOTE: reconstructed in the documented TypeSafe System One wire format (instructions/noul/legend-object); the review asked for the verbatim Sir Whiskers response from the Scribble Brawl spec Appendix A, which was not available in this repo — swap this file for the verbatim recording when available. Shape under test is identical.",
+  "model": "jev-2026-09-15",
+  "request_id": "req_sirwhiskers_001",
+  "usage": { "input_tokens": 18122, "output_tokens": 41, "total_tokens": 18163 },
+  "evaluation_time_ms": 212,
+  "answers": {
+    "claim_status": {
+      "type": "choice",
+      "choice": "supported",
+      "confidence": 0.81,
+      "probabilities": { "supported": 0.81, "contradicted": 0.04, "not_in_record": 0.1, "no_claim": 0.05 }
+    },
+    "judge_sustains": { "type": "noul", "noul": 0.22 },
+    "J3": { "type": "noul", "noul": 0.67 },
+    "J3_react": {
+      "type": "choice",
+      "choice": "shocked",
+      "confidence": 0.55,
+      "probabilities": { "unmoved": 0.1, "shocked": 0.55, "amused": 0.35 }
+    },
+    "impropriety": {
+      "type": "score",
+      "score": 1,
+      "confidence": 0.62,
+      "probabilities": { "0": 0.2, "1": 0.62, "2": 0.12, "3": 0.04, "4": 0.02 },
+      "legend": { "0": "proper", "1": "borderline", "2": "improper", "3": "flagrant", "4": "outrageous" }
+    }
+  }
+}

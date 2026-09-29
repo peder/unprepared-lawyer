@@ -1,0 +1,37 @@
+{
+  "name": "unprepared-lawyer-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Windows/Electron shell for Unprepared Lawyer (Steam distribution). Install only when packaging the desktop build.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron main.js",
+    "dist:win": "electron-builder --win portable nsis"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.unpreparedlawyer.game",
+    "productName": "Unprepared Lawyer",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "package.json",
+      "../client/dist/**/*",
+      "../server/**/*",
+      "../shared/**/*",
+      "../fixtures/**/*"
+    ],
+    "win": {
+      "target": ["portable", "nsis"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false
+    }
+  }
+}

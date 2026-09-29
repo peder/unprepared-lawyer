@@ -1,0 +1,6 @@
+node_modules/
+client/dist/
+desktop/node_modules/
+desktop/release/
+*.log
+.opencode/
