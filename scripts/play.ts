@@ -6,7 +6,45 @@
 // with redirected stdin), so TTY, pipes, and `< file` all behave the same.
 import "./env.js";
 import { stdin as inStream, stdout as outStream } from "process";
+import { createWriteStream, type WriteStream } from "fs";
+
+// --log=<file>: append a JSONL event log (every engine event, player input,
+// and per-question Jev decision) for post-trial review by another agent.
+const logArg = process.argv.find((a) => a.startsWith("--log="));
+const logPath = logArg ? logArg.slice("--log=".length) : null;
+let logStream: WriteStream | null = null;
+if (logPath) {
+  logStream = createWriteStream(logPath, { flags: "a" });
+}
+let loggedEvents = 0;
+function logRecord(obj: Record<string, unknown>) {
+  if (!logStream) return;
+  loggedEvents += 1;
+  logStream.write(JSON.stringify({ t: new Date().toISOString(), ...obj }) + "\n");
+}
+function closeLog() {
+  return new Promise<void>((resolve) => {
+    if (!logStream) {
+      resolve();
+      return;
+    }
+    logRecord({ kind: "log_closed", events: loggedEvents });
+    logStream.end(() => resolve());
+  });
+}
+// A silent mid-trial quit is the worst outcome: capture crashes into the log too.
+process.on("uncaughtException", (e) => {
+  logRecord({ kind: "crash", error: String(e?.stack ?? e) });
+  console.error("\n!! CRASH:", (e as Error).message);
+  void closeLog().finally(() => process.exit(1));
+});
+process.on("unhandledRejection", (e) => {
+  logRecord({ kind: "crash", error: String((e as Error)?.stack ?? e) });
+  console.error("\n!! CRASH (async):", (e as Error)?.message ?? e);
+  void closeLog().finally(() => process.exit(1));
+});
 import { TrialEngine } from "../server/trial/TrialEngine.js";
+import type { QuestionResult } from "../server/trial/TrialEngine.js";
 import { MockJevClient, type JevRequest } from "../server/jev/JevClient.js";
 import { createLLMClient } from "../server/llm/OpencodeLLMClient.js";
 import { generateCase } from "../server/gen/generateCase.js";
@@ -50,8 +88,13 @@ function pumpLine() {
 }
 function askLine(prompt: string): Promise<string> {
   outStream.write(prompt);
+  const started = Date.now();
+  inStream.resume();
   return new Promise((resolve) => {
-    lineWaiter = resolve;
+    lineWaiter = (line: string) => {
+      logRecord({ kind: "input", prompt: prompt.trim(), value: line, ms: Date.now() - started });
+      resolve(line);
+    };
     pumpLine();
   });
 }
@@ -81,6 +124,7 @@ async function main() {
   const eng = new TrialEngine(caseFile, jev, llm, {
     seed: Date.now() % 2 ** 31,
     onEvent: (e) => {
+      logRecord({ kind: "event", event: e });
       if (e.kind === "transcript") {
         const t = e.entry;
         const tag = t.stricken ? " [STRICKEN]" : "";
@@ -118,9 +162,9 @@ async function main() {
     for (let i = 0; i < CONFIG.PROSECUTION_DIRECT_QS; i++) {
       if (eng.state.outcome) break;
       const h = await eng.beginProsecutorQuestion({ witnessId: w.id });
-      console.log(`\n  PROSECUTOR: ${h.text}`);
       const grounds = await objectionWindow();
       const r = await eng.resolveObjectionWindow(h, grounds);
+      logResult("P-direct", r);
       if (r.stricken) console.log("  >> SUSTAINED — jury will disregard.");
       hud();
       reactions();
@@ -133,6 +177,7 @@ async function main() {
       if (eng.state.outcome) break;
       const q = await askLine(`Q${i + 1}> `);
       const r = await eng.askDefenseQuestion({ witnessId: w.id, text: q.trim() || "No further questions." });
+      logResult("cross", r);
       hud();
       reactions();
       if (r.mistrial) break;
@@ -166,7 +211,8 @@ async function main() {
     for (let i = 0; i < CONFIG.DEFENSE_QS; i++) {
       if (eng.state.outcome) break;
       const q = await askLine(`Q${i + 1}> `);
-      await eng.askDefenseQuestion({ witnessId: wid, text: q.trim() || "No further questions." });
+      const r = await eng.askDefenseQuestion({ witnessId: wid, text: q.trim() || "No further questions." });
+      logResult("direct", r);
       hud();
       reactions();
     }
@@ -179,9 +225,9 @@ async function main() {
     for (const q of cross) {
       if (eng.state.outcome) break;
       const h = await eng.beginProsecutorQuestion({ witnessId: wid, text: q });
-      console.log(`\n  PROSECUTOR: ${h.text}`);
       const grounds = await objectionWindow();
-      await eng.resolveObjectionWindow(h, grounds);
+      const r = await eng.resolveObjectionWindow(h, grounds);
+      logResult("P-cross", r);
       hud();
       reactions();
     }
@@ -200,6 +246,8 @@ async function main() {
   } else {
     console.log(`\n===== TRIAL ENDED: ${label(eng.state.outcome)} =====`);
   }
+  await closeLog();
+  if (logPath) console.log(`\n(log: ${loggedEvents} records → ${logPath})`);
 }
 
 function speaker(s: string): string {
@@ -211,6 +259,11 @@ function speaker(s: string): string {
 
 function label(o: string | undefined): string {
   return o === "not_guilty" ? "NOT GUILTY" : o === "guilty" ? "GUILTY" : o === "mistrial" ? "MISTRIAL" : "HUNG JURY";
+}
+
+/** Per-question Jev decisions, for post-trial review (spec §18 tuning hook). */
+function logResult(what: string, r: QuestionResult) {
+  logRecord({ kind: "result", what, stricken: r.stricken, ruling: r.ruling, mistrial: r.mistrial, answer: r.answer, details: { ...r.details } });
 }
 
 async function doRead(eng: TrialEngine, docs: { id: string; bin: string; title: string; body: string }[], _wid: string | null, why: string) {
@@ -264,7 +317,9 @@ async function objectionWindow(): Promise<"leading" | "hearsay" | "relevance" | 
         } catch { /* noop */ }
       }
       inStream.removeListener("data", onData);
-      inStream.pause();
+      // Keep the stream flowing: the next askLine depends on 'data' events.
+      // (pause() here was the prime suspect for the mid-trial silent quit.)
+      inStream.resume();
     };
     try {
       inStream.setRawMode(true);
