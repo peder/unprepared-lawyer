@@ -1,0 +1,605 @@
+{
+ "caseTitle": "The People v. Brenda Butterworth",
+ "defendant": "Brenda Butterworth",
+ "charge": "Grand Larceny of the Star Diamond on Gala Night",
+ "truth": "Brenda Butterworth, broke magician's assistant, is guilty of forgery, fraud, and criminal mischief, but she did not steal the Star Diamond on Gala Night. Three weeks earlier, drowning in gambling debts to the Clown Union, she commissioned a glass replica and swapped it for the real diamond during a daytime rehearsal, selling the real stone to a pawn broker in Reno for forty thousand dollars to pay debts. On Gala Night, the museum displayed only her worthless replica. When stagehand Eddie Voss stole that replica thinking it was real and fled through the air vent, Brenda was actually under the stage jamming the trapdoor with a baguette because she feared the sawing-in-half trick. She never entered the display case, never touched the vent, and owned no getaway car. Her panic, lies to police, and frantic texts about hiding the stone referred to hiding her earlier swap, not the Gala theft. Eddie is guilty of stealing a fake, the museum unknowingly displayed a fake, and Brenda is guilty of the original replica swap, but the charge of Gala Night grand larceny is factually impossible.",
+ "facts": [
+  {
+   "id": "F01",
+   "statement": "The Star Diamond disappeared from the museum display case at 9pm during Gala Night.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F02",
+   "statement": "Brenda Butterworth stood beside the display case as the magician assistant during the show.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F03",
+   "statement": "Brenda owed thirty eight thousand dollars to the Clown Union for poker debts before Gala Night.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F04",
+   "statement": "Security cameras recorded Brenda texting about hiding the stone at 845pm in the wings.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F05",
+   "statement": "Brenda fingerprints were found on the empty display case after the show.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F06",
+   "statement": "Brenda told police she never left the stage area that entire week.",
+   "favors": "prosecution",
+   "importance": 1
+  },
+  {
+   "id": "F07",
+   "statement": "A blue getaway sedan was seen speeding from the museum at 905pm.",
+   "favors": "prosecution",
+   "importance": 1
+  },
+  {
+   "id": "F08",
+   "statement": "The stone recovered from Eddie Voss duffel bag is cut glass worth eleven dollars.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F09",
+   "statement": "The museum scale logged the Gala Night display stone at twelve ounces while the real Star Diamond weighs nineteen ounces.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F10",
+   "statement": "A Reno pawn ledger shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F11",
+   "statement": "Stagehand Eddie Voss jacket fibers and sweat were found inside the narrow air vent above the case.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F12",
+   "statement": "Brenda was photographed wedged under the stage jamming the trapdoor with a baguette at 859pm.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F13",
+   "statement": "The trapdoor baguette carries Brenda teeth marks and stage dust from under the stage.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F14",
+   "statement": "Brenda is severely claustrophobic and cannot fit inside the twelve inch air vent.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F15",
+   "statement": "Eddie Voss rented the blue getaway sedan using a fake cousin name and his own credit card.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F16",
+   "statement": "Eddie searched online for how to sell diamonds without papers two days before Gala Night.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F17",
+   "statement": "The replica maker confirmed Brenda ordered a glass Star Diamond copy for a stage prop three weeks ago.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F18",
+   "statement": "No diamond tools or gloves were found in Brenda locker after the show.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F19",
+   "statement": "Eddie shoes match the dusty footprints leading from the vent to the parking lot.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F20",
+   "statement": "Brenda entrance badge never scanned at the display case hallway after 6pm on Gala Night.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F21",
+   "statement": "The museum continued to charge full insurance on the real diamond after the secret swap.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F22",
+   "statement": "Brenda once fainted inside a costume trunk during rehearsal due to tight spaces.",
+   "favors": "defense",
+   "importance": 1
+  },
+  {
+   "id": "F23",
+   "statement": "The Gala audience of two hundred people saw Brenda on stage waving rabbits at 900pm.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F24",
+   "statement": "Brenda text about hiding the stone was sent to her replica maker about unpaid bills.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F25",
+   "statement": "Police found forty thousand dollars in cash stuffed inside Brenda clown shoebox.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F26",
+   "statement": "The museum curator polished what he thought was the real diamond every Friday without noticing the swap.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F27",
+   "statement": "Eddie bragged at a bar that he would steal the spotlight and the sparkly rock that night.",
+   "favors": "defense",
+   "importance": 1
+  },
+  {
+   "id": "F28",
+   "statement": "A half eaten baguette matching the trapdoor baguette was found in Brenda backstage lunchbox.",
+   "favors": "prosecution",
+   "importance": 1
+  }
+ ],
+ "documents": [
+  {
+   "id": "D01",
+   "bin": "Box 7",
+   "title": "Police Report #4471",
+   "body": "METRO POLICE REPORT #4471 - Box 7 copy (third carbon, coffee ring on p.1, filed by Ofc. R. Kemp, badge 112). Call received 9:14pm Gala Night, noise complaint plus missing property. Complainant (night manager, name smudged) states the Star Diamond disappeared from the museum display case at 9pm during Gala Night, right after the drum roll for the finale (lights were low, catering was late, parking validation machine jammed again). Response time 11 min, rain on windshield, wipers squeaking. Walk-through: lobby sticky with champagne, gift shop register short $4, one pigeon inside atrium. Lab addendum p.2 stapled crooked - tech notes Brenda fingerprints were found on the empty display case after the show, mixed with about a dozen other partials and glove smears, no elimination prints yet (backlog 3 weeks). Property inventory p.3: the stone recovered from Eddie Voss duffel bag is cut glass worth eleven dollars, appraiser wrote party-favor grade in pencil and charged $75 fee. Footnote 4, almost illegible: museum scale logged the Gala Night display stone at twelve ounces while the real Star Diamond weighs nineteen ounces per 1987 cert card taped to scale. CSU swabbed the narrow air vent above the case (dust, dead moth, gum wrapper from 2019) and found Eddie Voss jacket fibers and sweat inside the vent shaft, bagged as Item 9B. Shoe unit comparison: Eddie shoes match the dusty footprints leading from the vent to the parking lot, size 11 zigzag tread with gum on left heel. Bag 23 sealed with red evidence tape and stored Box 7. Follow-up pending, overtime denied.",
+   "factIds": [
+    "F01",
+    "F05",
+    "F08",
+    "F09",
+    "F11",
+    "F19"
+   ]
+  },
+  {
+   "id": "D02",
+   "bin": "Evidence Bag 23",
+   "title": "Baguette Trapdoor Jam Photo",
+   "body": "EVIDENCE BAG 23 LOG SHEET - Baguette Trapdoor Jam Photo (35mm print, flash overexposed, corner bent). Photographer: stage crew intern, Nikon setting f/5.6, ISO 800, said the basement lights buzz. Description: wide shot under the stage, pipes, sawdust, soda caps, a folding chair missing a leg. Center frame (circled in red marker) Brenda was photographed wedged under the stage jamming the trapdoor with a baguette at 859pm, knees up, cape tangled, timestamp 20:59 on negative strip, second exposure blurry. Analyst note: the trapdoor baguette carries Brenda teeth marks and stage dust from under the stage, lab compared dental mold from backstage mug, plus gray dust identical to under-stage floor sweepings (contains glitter, mouse droppings). Margin scribble from detective: while checking if baguette was a stage prop, called the replica maker who confirmed Brenda ordered a glass Star Diamond copy for a stage prop three weeks ago, paid rush fee, asked for extra sparkle. Second call, Reno clerk faxed page: a Reno pawn ledger shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night, entry #881, signature loopy. Filing clerk note: Bag 23 sealed with blue evidence tape, initialed M.K., stored cold room because baguette going stale. Print 2 of 4, others show extension cord and mop.",
+   "factIds": [
+    "F10",
+    "F12",
+    "F13",
+    "F17"
+   ]
+  },
+  {
+   "id": "D03",
+   "bin": "Box 7",
+   "title": "Security Stills 845pm Texts",
+   "body": "BOX 7 INVENTORY MEMO - Security Stills 845pm Texts - intake clerk R. Patel, overflow from property room reshuffle. Box smelled like old popcorn and had a parking validation stub stuck to the lid (visitor lot, $4, expired). Per front desk, hallway copier on Level 2 jammed three times that morning per maintenance log #441, tech left a donut box and did not refill toner. Contents list: 14 printouts on matte paper, plus a USB with corrupted file names, plus a cafeteria receipt for Tuesday meatloaf ($6.75, extra gravy). Stills 1-5 are mostly empty hallway, a vending machine with E7 sold out, a pigeon near the loading dock, and two blurry custodial carts (exposure was overbright, camera 4 flickers). Still 6 (timestamped, wings west side) is annotated in pencil on the back, noting that security cameras recorded Brenda texting about hiding the stone at 845pm in the wings (aperture f2.8, file corrupted twice, reprinted). Stills 7-12 show exit signs, a mop bucket, and audience shoes. Phone extraction appendix is tedious: battery at 42%, cracked screen protector, 212 spam messages about car warranties, 37 unread group chats about costume glitter, ringtone set to circus march. Carrier subpoena footnote [3] clarifies the flagged message, stating the Brenda text about hiding the stone was sent to her replica maker about unpaid bills (thread includes three invoices, a meme, and a reminder about prop paint). Misfiled yellow sticky from records (meant for Bag 31) notes a background pull where a Reno pawn ledger shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night, initialed illegibly and paperclipped upside down. Filing ends with box taped with yellow tape, room temp 68F.",
+   "factIds": [
+    "F04",
+    "F24",
+    "F10"
+   ]
+  },
+  {
+   "id": "D04",
+   "bin": "Evidence Bag 24",
+   "title": "Glass Replica Lab Analysis",
+   "body": "EVIDENCE BAG 24 - Glass Replica Lab Analysis - lab tech S. Nguyen, backlog 11 days due to broken centrifuge and Tuesday meatloaf in cafeteria ($6.75, no gravy left, per receipt stapled here by mistake). Intake notes: bag seal intact, yellow tape, hallway copier on Level 2 jammed twice that morning per maintenance log #441, tech took the donut box and left toner on the floor. Microscope calibration was late (bulb ordered March, arrived late), bench clutter includes three coffee cups, a crossword, and a spare lens cap. Sample A is described over two pages of refractive index tables, cleaning solvent lot numbers, and a digression about the scale needing new batteries (AA, not AAA). Mid-paragraph result (after blank control slide) finds the stone recovered from Eddie Voss duffel bag is cut glass worth eleven dollars (RI 1.52, no fluorescence, chipped girdle, appraisal worksheet attached). Scale cross-check aside notes instrument drift of 0.2oz, with clerk writing that the museum scale logged the Gala Night display stone at twelve ounces while the real Star Diamond weighs nineteen ounces (calibration weight set #9, logbook page smudged with jelly). Reference fiber comparison vials were left on the same tray (cotton swabs, tape lifts, chain-of-custody tag smudged), with a contamination note recording that Stagehand Eddie Voss jacket fibers and sweat were found inside the narrow air vent above the case (sample envelope V-2, sent up for cleaning). Conclusion paragraph repeats cleaning procedure, disposal of gloves (size M), and a reminder to return the stapler to Room 101.",
+   "factIds": [
+    "F08",
+    "F09",
+    "F11"
+   ]
+  },
+  {
+   "id": "D05",
+   "bin": "Box 12",
+   "title": "Museum Scale Log Gala Night",
+   "body": "MUSEUM SCALE LOG - GALA NIGHT (Box 12) - Toledo bench scale, basement prep room. Custodian: M. Pryce. Please initial each line, do not leave coffee rings (again). 6:12pm taxidermy owl (donor return) 3.4 oz, feathers shedding, Pryce. 6:31pm box of Roman replica coins for gift shop, 14.2 oz total, counted twice because D. dropped tray. 6:47pm fluorescent bulb ballast, not for exhibit, just weighed for shipping, 28 oz. 7:15pm Gala Night display stone in velvet tray (listed as Star Diamond exhibit), logged at twelve ounces on digital readout (photo of readout taped below, 12.02 oz with tray tare subtracted), with margin note in pencil that file card ref weight for the real Star Diamond is nineteen ounces so recalibrate if drift persists (Pryce wrote 'scale acting up again?'). Shuttle note taped here: Pete the shuttle driver says Reno one-way is still $22, up from last year, will not wait after 8pm. 7:40pm plaster bust of founder, chipped nose, 96 oz, moved to hall. 8:05pm crate of programs, 210 oz approx. Footnotes from night clerk, 11:48pm: scale wiped down, Toledo last serviced Oct 3rd per sticker, will request weights-and-measures check Monday. P.S. lab called about separate item - stone recovered from Eddie Voss duffel bag tested as cut glass worth eleven dollars (their joke, not our dept, see lab slip 44-B), do not log as gem. P.P.S. vending machine ate my 75 cents, meatloaf sandwich stale, overcast drizzly setup morning per security sheet, will complain to facilities. End log, Pryce.",
+   "factIds": [
+    "F09",
+    "F08"
+   ]
+  },
+  {
+   "id": "D06",
+   "bin": "Box 3",
+   "title": "Reno Pawn Ledger Page 88",
+   "body": "RENO PAWN - LEDGER PAGE 88 (Box 3) - Daily intake, clerk H. Dobbins. Ink smudged, coffee ring page corner. Line 12: Sunbeam toaster, white, works half-side, $8, R. Alvarez. Line 13: trombone with dent, missing spit valve, $35 hold for school band kid, J. Park. Line 14: set dentures (unused? hopeful), rejected, no value, referred to dentist. Line 15: three weeks before Gala Night (date stamped Oct 2nd, 2:14pm), Brenda sold a nineteen ounce certified diamond (cert GIA copy stapled, stone described as round brilliant, nineteen ounces gross with mount, tested on counter scale) for forty thousand dollars, payout cash in envelope, signature B. Butterworth, ID verified, clerk Dobbins (manager override for large gem buy, safe drop). Line 16: fishing reel tangled, $12, T. Okafor. Line 17: lava lamp, purple, $6, no lid. Margin doodles: Pete the shuttle driver says Reno one-way is now $24, up from last year (do not front bus money to customers), vending pretzels $1.50, call exterminator for back room. Attached sticky from museum facilities (filed here by mistake): maintenance note that Eddie Voss jacket fibers and sweat were found inside the narrow air vent above the case (wiped with swab, sent to lab, vent dust thick), work order to add grate screws, Toledo bench scale last serviced Oct 4th per our guy, not Oct 3rd. Clerk reminder: ledger pages 87-89 water damaged last spring, recopy if audit asks, lunch break 1-2pm, sunny clear setup morning that week, lock ice machine.",
+   "factIds": [
+    "F10",
+    "F11"
+   ]
+  },
+  {
+   "id": "D07",
+   "bin": "Evidence Bag 25",
+   "title": "Air Vent Fiber and Sweat Report",
+   "body": "METRO CRIME LAB — TRACE / TOUCH DNA REPORT #TL-4491\nEvidence Bag 25 (vent grille + swabs) — Case: People v. Butterworth — Gala Night exhibit\nAnalyst: P. Desai / Peer: R. Okoro / Logged Oct 3, backlog delay 11 days due to centrifuge repair\n\nSUMMARY OF SUBMISSIONS: Bag 25-A outer grille dust, 25-B middle shaft wipe, 25-C inner grille swab (above the display case), 25-D control cotton, 25-E breakroom donut crumb (analyst joke, disregard). Instrument: FTIR microscope calibrated Sept 28, blank runs clean except coffee spill on keyboard, IT ticket #881.\n\nMethods blah blah — tape lifts x14, vacuum x2, alternate light 450nm, DNA quant. Most lifts were just gray lint, pigeon fluff, and what looks like glitter from 2019 (museum is dusty, maintenance log says shaft last vacuumed in spring, work order still pending, supervisor on vacation).\n\nRESULTS (see appendix Q for spectra): 25-A/B inconclusive mixed fibers. The interesting bit is 25-C — inner surface of the narrow air vent directly above the case (measured on-site at twelve inches across, photo ruler attached, tech notes say knees scraped getting ladder up) returned a two-source hit (lab footnote 4: sweat DNA match control provided for stagehand Eddie Voss, plus blue twill jacket fibers consistent with his work jacket, both found inside the narrow air vent above the case, quantity sufficient, not a touch-transfer guess). Night-shift tech wrote \"smells like old sweat + WD40\" which is not scientific but noted.\n\nOther notes: chain-of-custody initials smudged, front desk lost page 2, reprinted. Medical liaison slip stapled here by accident — intake nurse flagged suspect Brenda Butterworth as severely claustrophobic, chart says panic in elevators, cannot fit / cannot be placed inside the twelve inch air vent without sedation (Dr. Patel memo 9/12). Filing clerk says keep it, might matter for access theory.\n\nDisposition: retain swabs freezer C, fibers slide box 7. Invoice $212.",
+   "factIds": [
+    "F11",
+    "F14"
+   ]
+  },
+  {
+   "id": "D08",
+   "bin": "Misc. — DO NOT OPEN",
+   "title": "Clown Union Debt Ledger",
+   "body": "MISC. BOX — DO NOT OPEN — CLOWN UNION HALL LOCKER CLEANOUT (transcribed ledger pages 14-18, treasurer Marty P.)\nCase file copy: People v. Butterworth, found taped under poker table\n\nPage 14: Hall rental $200, balloon order $85 late, who ate the treasurer's sandwich (again). Poker night roster: Big Nose Lou, Stinky Pete, Brenda B., etc. Buy-in $50, rebuys unlimited Fridays. Notes on house rules, joker wild, no crying, IOUs must be initialed.\n\nPage 15-16 (coffee ring, ketchup): Running tabs — Lou owes $420 (paid $100 in face paint), Pete owes $1,100, Brenda Butterworth running total — poker debts to the Clown Union now at thirty eight thousand dollars ($38,000) carried from August through September before Gala Night, treasurer writes \"PAY OR NO GIGS\" underlined three times, late fee $25/week, collection visit scheduled (scribble: she cried, promised after gala paycheck, said magician gig pays rent). Margin doodle of sad clown, phone number crossed out.\n\nPage 17: Dues, fines for squeaky shoes, $10 fine for \"unfunny pratfall.\" Treasurer reminder: annual polka fundraiser Oct 20, bring own custard. Handyman note stapled: museum vent work? someone wrote \"that shaft's like 14 inches, easy crawl for a small guy\" with arrow to ledger (unrelated, Marty lets museum janitor play poker, ignore).\n\nPage 18: IOU slips, napkin math, total pot $312 on Sept 30, Brenda borrowed $200 more that night (included in total above). Secretary signature illegible, stamp smudged. Clerk note: originals smell of popcorn, photocopy and return to hall lost-and-found.",
+   "factIds": [
+    "F03"
+   ]
+  },
+  {
+   "id": "D09",
+   "bin": "Box 12",
+   "title": "Blue Sedan Rental Agreement",
+   "body": "SPEEDYRENT - BLUE SEDAN RENTAL AGREEMENT - Box 12 - Lot 4, Airport Rd. Form R-22 Rev. 3, pink carbon, please press hard. Renter copy / File copy / Glovebox copy (do not remove glovebox copy). Daily rate $49.99 plus $12.99 loss-damage waiver declined (initials E.V.), plus $7 satellite radio fee, plus $25 cleaning surcharge if returned with confetti, popcorn, or stage dust, plus gas at $8.90/gal if not refilled to F. Vehicle assigned: blue 4-door sedan, 2018 model, plate 7XK-419, mileage out 41102, fuel F, dents circled on diagram (rear bumper scratch noted, hubcap loose). Renter signature on line 14 reads Cousin Mikey Voss (printed block letters, misspelled license no. 000-111) but payment taken on same transaction on Visa ending 4417 embossed to Eddie Voss with matching CVV and zip, clerk initialed hold $200, rental period listed Oct 11 4:15pm to Oct 12 10am, one day. Office hours posted: Mon-Sat 8am-7pm per manager memo 9/30 (no after-hours drop, use slot). Parking lot camera appendix attached by police liaison 10/13 notes same blue sedan (plate 7XK-419) was seen speeding from the museum north exit at 905pm on Gala Night with lights off, which tow log cross-references to this contract. Clerk addendum in margin: customer asked for no GPS, wanted trunk large enough for duffel bag, declined upgrade to SUV. Footnotes: 1) Lab valuation circular stapled here for unrelated claim notes cut glass souvenir stones of this type appraise at eleven dollars, same as the stone recovered from Eddie Voss duffel bag which tested as cut glass (see property tag 88-B). 2) Museum facilities work order attached by mistake shows Gala Night display stone logged on the museum scale at twelve ounces on Oct 11 calibration check while the real Star Diamond certificate weight is nineteen ounces. Customer reminded to check oil, tire pressure 32psi, and that smoking in vehicle is $150 fee.",
+   "factIds": [
+    "F07",
+    "F15",
+    "F08",
+    "F09"
+   ]
+  },
+  {
+   "id": "D10",
+   "bin": "Box 9",
+   "title": "Fingerprint Report Case Empty",
+   "body": "CRIME LAB - FINGERPRINT REPORT CASE EMPTY - Box 9 - Case #44-GALA, examiner L. Cho, date Oct 14. Method: black magnetic powder, fiberglass brush No.4 (new brush req. ordered, old sheds), fuming with superglue in tent 20 min, alternate light source 450nm, coffee ring on page 2 not a print. Item 1: empty display case glass, outer north panel, 12x18 in, wiped area streaked, dusted twice due to humidity from fog machine. Item 2: inner latch plate, brass, smudged. Item 3: base velvet (lint heavy). Results summary buried on page 3 after inventory of 14 elimination prints from janitor, curator, caterer: positive match for Brenda Butterworth fingerprints found on the empty display case outer rim after the show (right thumb, left index, 12-point match, AFIS 88921), consistent with handling without gloves, no overlay of other fresh prints on that edge. Chain of custody: collected Oct 11 11:40pm by Off. Tran, bagged, sealed with tape initialed, stored locker C (locker room thermostat 71F). Lab chatter: vent swab envelope 9-C opened same bench (separate casework but noted here for bench log continuity) contained jacket fibers matching Eddie Voss blue work jacket plus sweat DNA match to Eddie Voss collected from inside the narrow air vent above the case, technician wrote yuck in margin. Records cross-check scribble: Reno pawn ledger page faxed Oct 13 shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night (entry 9/20, initials B.B., cert #SD-19oz). Admin footer: rental desk hours Mon-Sat 8am-8pm per manager memo 9/30, see clerk Marla for Box 12 retrieval, archive room temp 71F, form L-10 Rev. 4. Recommendation: re-dust latch after 30 days, discard brush No.4.",
+   "factIds": [
+    "F05",
+    "F10",
+    "F11"
+   ]
+  },
+  {
+   "id": "D11",
+   "bin": "Misc. — DO NOT OPEN",
+   "title": "Replica Maker Invoice Glass Star",
+   "body": "GLITTER & GORE PROP SHOP - Invoice #8871-B (Misc. — DO NOT OPEN — filed upside down behind the whoopee cushions) Customer: B. Butterworth, Magician's Assistant, billing address: trailer 3, back lot. Date of order: three weeks before Gala Night (rush fee waived because she brought donuts, old-fashioned, two dozen). Item 1: One (1) glass Star Diamond copy for a stage prop, hand-cut, lead glass, slightly cloudy on left facet, includes velvet pouch (velvet extra, $4). Item 2: Three (3) collapsible rabbits, slightly chewed. Item 3: Glitter surcharge, extra-fine, gold. Subtotal $212.40, tax $18.11, unpaid balance carried forward $96.00 (see footnote 3). Shop notes: parrot fed twice, parking validation stamp broken, rain Tuesday, we set out 200 folding chairs per event sheet for the gala demo (clutter). Footnote 1: glass copy made from photo, no cert, maker keeps mold. The maker confirmed in the margin that Brenda ordered a glass Star Diamond copy for a stage prop three weeks ago (initialed R.J., with a coffee ring). Footnote 2, from bookkeeping (Marge in filing — 47 years old, loves cats): saw a clipping taped to the ledger that a Reno pawn ledger shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night, lot #R-4419, which Marge thought was weird for a prop client but filed anyway under P for Pawn. Footnote 3, collections scribble: all those frantic texts about hiding the stone (845pm-ish, 4-5 messages, lots of typos) were sent to her replica maker about unpaid bills and hiding the invoice from her landlord, not anything else — call her back re: $96. Manager sign-off illegible, shop smells of tuna, next appointment Thursday.",
+   "factIds": [
+    "F17",
+    "F10",
+    "F24"
+   ]
+  },
+  {
+   "id": "D12",
+   "bin": "Evidence Bag 26",
+   "title": "Dusty Vent Footprint Cast",
+   "body": "EVIDENCE BAG 26 — Dusty Vent Footprint Cast (Lab Tech: D. Prieto, intake 10/14, don't shake, plaster still tacky) Contents: one (1) plaster cast, left shoe, size 11 sneaker, dust + gray lint, lifted from hallway floor between the narrow air vent above the case and the east exit toward the parking lot. Chain of custody: Officer Hall (who spilled mustard, see stain report), to night lab, to shelf 4 beside the meatloaf sandwich (cafeteria served meatloaf Wednesday — terrible as always, and we set out 210 folding chairs per event sheet for the gala). Lab notes, page 2 of 4: the vent swab (separate bag 25, cross-ref) came back with Eddie Voss jacket fibers and sweat found inside the narrow air vent above the case (blue nylon, perspiration, matches his work jacket, plus a gum wrapper). The cast comparison (page 3, buried under calibration data for the scale, coffee log, and Marge in filing — 48 years old, loves cats) states Eddie shoes match the dusty footprints leading from the vent to the parking lot, heel drag consistent, 7 prints in sequence. Appendix C, scale printout taped sideways: the museum scale logged the Gala Night display stone at twelve ounces while the real Star Diamond weighs nineteen ounces (cert weight on file, re-weighed twice because tech thought scale was broken). Appendix D, recovery memo: the stone recovered from Eddie Voss duffel bag (navy canvas, chain of custody tag #E-9) is cut glass worth eleven dollars, jeweler appraisal $11.00, no fluorescence, chipped girdle. Conclusion pending, plaster dust everywhere, do not inhale.",
+   "factIds": [
+    "F11",
+    "F19",
+    "F09",
+    "F08"
+   ]
+  },
+  {
+   "id": "D13",
+   "bin": "Box 9",
+   "title": "Entrance Badge Scan Records",
+   "body": "Metropolitan Museum Annex - Security Office Memo Re: Badge Reader Logs for Gala Week Oct 12-18 (Box 9, folder 4 of 7) compiled by R. Diaz, part-time security, also covers gift shop on Tuesdays. Readers covered: A = Main Staff Door, B = Display Case Hallway north corridor, C = Loading Dock, D = Cafeteria. NOTE from IT ticket #441 taped on top: Reader B was flaky all week, reboot takes 4 minutes if you hold both buttons, do not kick it. Log dump is messy because Facilities spilled coffee on the printer Tuesday and the cafeteria meatloaf (served 6:30pm, very dry) got into the keyboard. Full dump: Brenda Butterworth Badge #BB-214 Magician Assistant scans listed as Mon 9:04am A, Mon 12:15pm D (turkey wrap), Tue 9:11am A, Thu 11:32am B for daytime rehearsal with prop cart, Sat Gala Night 5:12pm A with rabbit cage noted by guard as bunnies 2, Sat 5:48pm C for smoke break near dumpsters (witness: custodian). Highlighted in yellow with initials RD in margin, no scans at all for BB-214 at Reader B Display Case Hallway after 6pm on Gala Night, checked twice, last B read was Thursday morning. Maintenance sticky stapled behind (10/19, dust complaint): while fixing Reader B the tech swabbed the narrow air vent above the case and lab called back that Eddie Voss jacket fibers and sweat were found inside, matches his work jacket size L with nacho stain, plus a lot of dust. Misfiled scale calibration slip attached by mistake: pedestal scale logged the Gala Night display stone at 12 ounces, while the spec card in file for the real Star Diamond says 19 ounces with handwritten note re-calibrate?? Facilities footer: parking lot repaved 2019, 112 spots total, do not park in curator spot.",
+   "factIds": [
+    "F20",
+    "F09",
+    "F11"
+   ]
+  },
+  {
+   "id": "D14",
+   "bin": "Box 3",
+   "title": "Bar Napkin Brag Note",
+   "body": "Evidence Bag #3-22: O'Malley's Tavern - bar napkin front and back plus bartender statement, dated Oct 16, filed with lab addendum (Box 3). Front in blue pen, sloppy: EDDIE V. - gonna STEAL THE SPOTLIGHT and the SPARKLY ROCK that night!!! Gala = payday, tell Mike. Back has drink tallies, phone number with no name, and doodle of diamond with dollar signs. Bartender statement (Jen K., shift 4pm-midnight): guy in stagehand shirt, Eddie Voss, regular who counts parking spaces when bored, says lot has 114 spots, was buying rounds of Coors Light, peanuts were fresh that night, meatloaf special at 6:45pm was better than museum cafeteria, kept bragging at the bar that he would steal the spotlight and the sparkly rock that night, laughed loud, left $2 tip. Detective scribble on envelope in different ink, dated Oct 20: follow-up, check Reno pawn ledger page 77, shows Brenda sold a nineteen ounce certified diamond for forty thousand dollars three weeks before Gala Night, clerk remembers magician cape, copy requested. Lab addendum stapled Oct 21 from county gemologist, re: duffel bag contents: the stone recovered from Eddie Voss duffel bag tested as cut glass worth eleven dollars, no fluorescence, chipped edge, store-bought craft quality, see photos 14-18. Clerk note: napkin smells like beer, keep in plastic.",
+   "factIds": [
+    "F27",
+    "F08",
+    "F10"
+   ]
+  },
+  {
+   "id": "D15",
+   "bin": "Evidence Bag 27",
+   "title": "Clown Shoebox Cash Inventory",
+   "body": "PROPERTY ROOM INTAKE - Evidence Bag 27 - Clown Shoebox Cash Inventory (Officer Daniels, Room C, completed 11:47pm, room temp noted as 68F for some reason). Item received as one oversized fire-engine red clown shoe with yellow pom-pom trim, left foot, size 22, scuffed toe, missing laces, smelling faintly of greasepaint and glass cleaner and old popcorn. Contents logged out of order because night shift was backed up with Gala Night traffic cones and lost-and-found boas. Initial count: tissue paper (4 wads), rubber noses (3, one cracked), grease sticks (2, mauve and black), bus transfers (expired), donut crumbs, a folded invoice fragment reading ...special stage prop - balance due... please call... (ink smeared, no name legible, tucked under the insole) plus a daytime rehearsal timetable from about three weeks ago with coffee rings and the corner torn off, and - wedged flat under all that, counted twice because first total did not match - forty thousand dollars in cash in mixed small bills with older band dates stuffed inside Brenda clown shoebox found by police during locker search (see photo sheet 27-A, rubber-banded in stacks of twenties and fifties). Footnote [1]: cross-check requested by detectives to Reno pawn ledger entry from three weeks before Gala Night showing Brenda sold a nineteen ounce certified diamond for forty thousand dollars (Ledger p.44, initials B.B.), which is why the cash bands predate Gala week and look handled, though cashier notes bills are still crisp at edges. Footnote [2]: registrar attachment misfiled here - museum scale logged the Gala Night display stone at twelve ounces while the real Star Diamond weighs nineteen ounces per certification card, scale tape timed 7:12pm Gala Night (clerk wrote wow light? in margin). Lab slip stapled crookedly to bag (should have gone to Bag 31, per tech Maria) notes the stone recovered from Eddie Voss duffel bag is cut glass worth eleven dollars, appraiser Post-it says party favor grade, do not insure, plus a control swab envelope included in error in this bag with lab tech note that Stagehand Eddie Voss jacket fibers and sweat were found inside the narrow air vent above the case, sample V-3, keep dry. Handwritten scrap in shoe toe in loopy ink reads hide it, please hide it, debts paid dont tell, no date. Chain of custody: Daniels to Patel (12:15am), Patel back to fridge (donuts also in fridge, do not confuse). Total weight of shoe plus cash 4.3 lbs, shoe alone 1.1 lbs. Pom-pom lint noted for completeness.",
+   "factIds": [
+    "F08",
+    "F09",
+    "F10",
+    "F11",
+    "F25"
+   ]
+  }
+ ],
+ "witnesses": [
+  {
+   "id": "W1",
+   "name": "Detective Hal Brisket",
+   "role": "Lead investigator who arrested Brenda at the magic show",
+   "calledBy": "prosecution",
+   "personality": "Gruff, camera-hungry veteran detective who rushed to close the Gala Night case. Confident to the point of arrogance and willing to fudge details to protect his arrest record.",
+   "speechStyle": "Clipped cop jargon full of 'per protocol,' 'in my 22 years on the force,' and calling everyone pal or kid. Pompous, declarative, refers to his notebook for effect.",
+   "relationshipToCase": "Lead investigator who arrested Brenda at the magic show, called by prosecution",
+   "knows": [
+    "F01",
+    "F02",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F25"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F20",
+     "lie": "Brenda's entrance badge scanned at the display case hallway at 8:57pm on Gala Night",
+     "reason": "To place her at the display case, justify his dramatic on-stage arrest, and cover that he never actually checked the badge logs"
+    }
+   ],
+   "doesNotKnow": "That the Gala stone weighed 12 ounces not 19, that Brenda sold a 19 ounce diamond in Reno three weeks earlier, that she ordered a glass replica, that Eddie's fibers and sweat were in the vent, his rental, searches and footprints, the under-stage baguette photo with teeth marks, Brenda's severe claustrophobia, and that her hiding-the-stone text was to the replica maker about bills.",
+   "secret": "Once lost a suspect's confession tape and rewrote it from memory; terrified the defense will request his disciplinary file."
+  },
+  {
+   "id": "W2",
+   "name": "Curator Penelope Shine",
+   "role": "Museum curator in charge of the Star Diamond exhibit",
+   "calledBy": "prosecution",
+   "personality": "Penelope is a haughty, meticulous career curator obsessed with the museum's prestige and her own expertise. She is defensive about her oversight failures and eager to pin Gala Night on an outsider to save her job and the museum's insurance standing.",
+   "speechStyle": "Precise, lecturing museum-docent tone, name-drops provenance and carat weight, turns frosty and condescending when her competence is questioned.",
+   "relationshipToCase": "Museum curator in charge of the Star Diamond exhibit, called by prosecution to establish the diamond's value and disappearance",
+   "knows": [
+    "F01",
+    "F02",
+    "F08",
+    "F21",
+    "F26"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F09",
+     "lie": "I weighed the Gala Night display stone myself that afternoon and it was the full nineteen ounces — the twelve-ounce scale log is a glitch and misread.",
+     "reason": "To hide that she polished a glass fake every Friday for three weeks without noticing and to protect the museum from insurance-fraud liability, while supporting the prosecution theory that the real diamond was still in the case on Gala Night."
+    }
+   ],
+   "doesNotKnow": "She never looked inside the narrow air vent, never went under the stage, and knows nothing about Eddie's fibers and sweat in the vent, his rental sedan, footprints to the parking lot, diamond-sale searches, Brenda's badge scans, Brenda wedged under the stage jamming the trapdoor at 859pm, Brenda's teeth marks on the baguette, Brenda's claustrophobia, her 845pm text to the replica maker, the Reno pawn ledger, or the forty thousand in cash.",
+   "secret": "She polished the exhibit stone with drugstore Windex against conservation protocol and has been secretly interviewing for other curator jobs since Gala Night."
+  },
+  {
+   "id": "W3",
+   "name": "Eddie Voss",
+   "role": "Sweaty stagehand found with glass replica in his duffel",
+   "calledBy": "defense",
+   "personality": "Sweaty, loud-mouthed stagehand who brags big and sweats twice as much. Talks fast when nervous and tries to sound like a criminal mastermind but folds immediately under pressure. Desperate to look cooperative for the defense so his own theft looks like a dumb mistake.",
+   "speechStyle": "Fast, rambling bro-talk with lots of filler, nervous laughter, and exaggerated tough-guy slang that cracks when questioned",
+   "relationshipToCase": "Gala Night stagehand who crawled through the air vent and stole the display stone thinking it was the real Star Diamond, caught with the glass replica in his duffel and the rented getaway sedan",
+   "knows": [
+    "F08",
+    "F11",
+    "F15",
+    "F19",
+    "F23",
+    "F27"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F15",
+     "lie": "My cousin rented that blue sedan, I just let him use my credit card as a favor",
+     "reason": "To distance himself from the getaway car and avoid an added grand theft auto charge"
+    },
+    {
+     "factId": "F27",
+     "lie": "That bar brag about stealing the spotlight and the sparkly rock was just a joke about stage lights, not a plan",
+     "reason": "To hide premeditation and make the vent theft sound like a spontaneous dumb dare"
+    }
+   ],
+   "doesNotKnow": "Knows nothing about Brenda's daytime rehearsal swap three weeks earlier, the Reno pawn sale, the replica maker order, her 845pm texts about hiding the stone, her fingerprints on the case, her badge scans, the baguette in the trapdoor, or the museum weight and insurance logs",
+   "secret": "Once got stuck in that same air vent last summer on a dare and had to be greased out with stage butter, and he has a massive crush on the rabbit wrangler"
+  },
+  {
+   "id": "W4",
+   "name": "Gus Glimmer",
+   "role": "Shady replica maker who built the eleven dollar glass copy",
+   "calledBy": "defense",
+   "personality": "Gus is a sweaty, fast-talking hustler who brags about his glasswork while constantly glancing over his shoulder. He desperately wants to look like a legit prop artist but panics the second anyone mentions receipts, police, or conspiracy charges. Under the bluster he is terrified of being pegged as Brenda's accomplice.",
+   "speechStyle": "Fast, slangy and ingratiating, calls everyone 'pal' or 'boss', name-drops glass types and prices, lots of nervous filler like 'uh, y'know' and rambling tangents when pressed",
+   "relationshipToCase": "Shady replica maker who built the eleven dollar glass Star Diamond copy for Brenda three weeks before Gala Night, called by defense",
+   "knows": [
+    "F17",
+    "F08",
+    "F24",
+    "F09"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F17",
+     "lie": "Brenda told me it was just for a harmless stage magic trick and I had absolutely no idea she would swap it for the real diamond",
+     "reason": "to avoid being charged as an accomplice to forgery and fraud and to keep his replica business alive"
+    }
+   ],
+   "doesNotKnow": "He was never at the museum on Gala Night and knows nothing about the trapdoor baguette, the air vent, Eddie Voss, the blue getaway sedan, fingerprints, badge scans, the museum scale weights, or the Reno pawn sale",
+   "secret": "He also makes fake clown union IDs and unlicensed snow-globes in his basement kiln and is terrified police will search his shop"
+  },
+  {
+   "id": "W5",
+   "name": "The Great Zamboni",
+   "role": "Washed-up magician and Brenda terrified boss",
+   "calledBy": "defense",
+   "personality": "The Great Zamboni is a bombastic, washed-up headliner who still believes he is the toast of Las Vegas. He is supremely overconfident about his flawless memory and legendary magic skills despite getting almost every detail wrong. He takes credit for everything on his stage and is secretly terrified of Brenda quitting on him.",
+   "speechStyle": "Grandiose magician stage patter, constant third-person self-reference as 'Zamboni', frequent shouts of 'Behold! Ta-da! Zamboni never forgets!'",
+   "relationshipToCase": "Brenda Butterworth's boss and the headliner magician of the Gala Night show, called by the defense as her supervisor",
+   "knows": [
+    "F02"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F17",
+     "lie": "I, the Great Zamboni, personally ordered the glass Star Diamond copy myself three weeks ago as my own brilliant stage prop idea, Brenda had nothing to do with it.",
+     "reason": "Massive ego to take credit for the prop and terrified loyalty to protect his assistant from suspicion about ordering a replica"
+    }
+   ],
+   "doesNotKnow": "Knows nothing about the air vent, fingerprints, diamond weights, pawn ledger in Reno, getaway sedan, texts about hiding the stone, trapdoor baguette, or where Brenda was under the stage; never went near the vent, hallway scanner, or parking lot and understands nothing about diamonds, insurance, or Clown Union debts.",
+   "secret": "May blurt out that his famous disappearing rabbits are actually rented and overdue, his toupee is glued on with spirit gum, and he once set his own cape on fire during a disappearing act in Tahoe."
+  },
+  {
+   "id": "W6",
+   "name": "Dot Reno",
+   "role": "Reno pawn broker who bought the real diamond for cash",
+   "calledBy": "defense",
+   "personality": "Dot Reno is a blunt, seen-it-all Reno pawn shop owner with thirty years of haggling behind bulletproof glass. She is shrewd about money but chatty and maternal once she trusts you, with zero patience for legal niceties.",
+   "speechStyle": "Gravelly rapid-fire pawn-counter patter, calls everyone 'hon' or 'sugar', drops Reno gambling slang and prices into every sentence",
+   "relationshipToCase": "Reno pawn broker who bought the real Star Diamond for cash three weeks before Gala Night, called by defense to prove the earlier swap",
+   "knows": [
+    "F10"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F03",
+     "lie": "Brenda never said a word about owing money to the Clown Union, she said she was just selling an inheritance",
+     "reason": "Does not want to admit she knew the sale was desperate to pay gambling debts, for fear it makes her look like a fence and risks her pawn license"
+    }
+   ],
+   "doesNotKnow": "Anything about Gala Night itself - the display case, the vent, the trapdoor baguette, the getaway sedan, fingerprints, texts, or what Eddie Voss did; she has never been to the museum and never heard of Eddie",
+   "secret": "Skims cash off the books to feed her secret Elvis memorabilia addiction and once pawned her second husband's dentures while he was napping"
+  },
+  {
+   "id": "W7",
+   "name": "Chuckles Malone",
+   "role": "Clown Union debt collector pursuing Brenda poker debts",
+   "calledBy": "defense",
+   "personality": "Chuckles is a loud, overconfident ex-circus clown turned enforcer who treats debt collection like children's party entertainment. He brags constantly about his 100% collection rate and punctuates threats with a shrill honking laugh. Under the greasepaint he's nervous about cops sniffing around the Union's poker games.",
+   "speechStyle": "Booming clown voice mixing corny circus gags with loan-shark slang, calls everyone 'kiddo' or 'toots', punctuates sentences with a HONK, speaks in short menacing punchlines",
+   "relationshipToCase": "Clown Union debt collector pursuing Brenda for poker debts, called by defense to confirm her motive to sell the stone weeks earlier",
+   "knows": [
+    "F03",
+    "F25"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F03",
+     "lie": "It was just a small friendly $5,000 personal loan between clowns, no poker or vig involved",
+     "reason": "To protect the Clown Union's illegal high-stakes poker ring from police investigation and keep himself out of jail"
+    }
+   ],
+   "doesNotKnow": "He knows nothing about the museum layout, Gala Night show, display case, replica swap, air vent, trapdoor, baguette, getaway sedan, or fingerprints - he never went near the museum that week",
+   "secret": "He skims 10% off every collection to feed his own secret balloon-animal betting habit and is terrified Union boss Pogo will find out"
+  }
+ ],
+ "judge": {
+  "name": "Judge Marla Hootenbang",
+  "persona": "Former circus clown turned judge who runs a tight courtroom with rubber chicken gavel and zero tolerance for puns after lunch.",
+  "strictness": 4,
+  "basePatience": 78
+ },
+ "prosecutor": {
+  "name": "Victor Vane",
+  "persona": "Theatrical overachiever who treats every trial like a magic finale and objects loudly to protect his perfect conviction streak.",
+  "objectionTendency": 4
+ },
+ "jurors": [
+  {
+   "id": "J1",
+   "label": "Retired Sea Captain",
+   "persona": "Sailed 40 years, remembers every storm and every insult. When the judge says 'disregard that,' he writes it in his little notebook and underlines it twice. Calls the defendant 'the accused barnacle.' Never forgets anything, especially stricken testimony."
+  },
+  {
+   "id": "J2",
+   "label": "Kindergarten Teacher",
+   "persona": "Trusts authority completely. If the judge said the sky is pizza, she'd laminate it. Gives gold stars mentally for good objections. Says 'we use our listening ears' during sidebars. Believes lawyers are just tall children who need naps."
+  },
+  {
+   "id": "J3",
+   "label": "Conspiracy Podcast Host",
+   "persona": "Hosts 'The Butter Truth' with 14 listeners. Thinks the trial is a psy-op by Big Dairy. Takes notes in code. Whispers 'follow the churn' to other jurors. Remembers stricken material and makes it his entire season finale."
+  },
+  {
+   "id": "J4",
+   "label": "Retired Librarian",
+   "persona": "Shushes coughing attorneys. Has total recall and treats stricken statements like banned books she secretly memorized. Stamps 'OVERRULED' in her mind. Trusts no one except the Dewey Decimal System and Judge Judy reruns."
+  },
+  {
+   "id": "J5",
+   "label": "Sleep-Deprived New Dad",
+   "persona": "Hasn't slept since 2023. Dozes off during objections, wakes up shouting 'the baby's fine!' Drools slightly on his juror badge. Votes with whoever lets him leave fastest for nap time. Loves everyone, remembers nothing."
+  },
+  {
+   "id": "J6",
+   "label": "Vegan Dog Groomer",
+   "persona": "Cries if anyone mentions a sad cow. Volunteers at three shelters and names all pigeons outside the courthouse. If Brenda harmed an animal, she's already guilty. Brings oat-milk treats for everyone and judges your shoes."
+  },
+  {
+   "id": "J7",
+   "label": "Rule-Following Accountant",
+   "persona": "Trusts judges completely, like human instruction manuals in robes. Says 'objection sustained' in his sleep. Color-codes evidence by credibility. If the judge tells him to disregard, poof, gone from his spreadsheet brain. Loves order, fears chaos."
+  },
+  {
+   "id": "J8",
+   "label": "Night-Shift Taco Cook",
+   "persona": "Works 11pm to 7am, naps with eyes open like a lizard. Dozes off mid-testimony and dreams in salsa. Wakes up for anything about food or drama. Asks if 'hearsay' is a new hot sauce. Funny, tired, hungry always."
+  },
+  {
+   "id": "J9",
+   "label": "Sassy Grandma of Seven",
+   "persona": "Raised seven kids, survived PTA wars. Trusts the judge unless he reminds her of her ex-husband Gary. Takes no nonsense, knits during recess. Says 'honey, please' when lawyers ramble. Forgets nothing but pretends she didn't hear it."
+  },
+  {
+   "id": "J10",
+   "label": "IT Guy Who Reads Terms of Service",
+   "persona": "Actually reads jury instructions for fun. Screenshots mentally everything the judge strikes and saves it to permanent brain-cloud storage. Says 'actually' a lot. Trusts process but never deletes data. Will quote stricken line verbatim in deliberation."
+  },
+  {
+   "id": "J11",
+   "label": "Yoga Instructor Who Loves Pigeons",
+   "persona": "Weeps at pet food commercials. Believes all animals are innocent angels and all humans are works in progress. Meditates during recess. Wears a shirt saying 'Namaste Away From Drama.' Will acquit anyone who rescues raccoons."
+  },
+  {
+   "id": "J12",
+   "label": "Professional Couch Napper",
+   "persona": "Can fall asleep standing up. Snores softly during video evidence, wakes up clapping. Missed half the trial but feels spiritually informed. Says 'I was resting my eyes for justice.' Dreams about being foreman. Dozes through everything important."
+  }
+ ],
+ "prosecutionOpening": "Ladies and gentlemen, welcome to my next flawless finale — I even tabbed the evidence for you. The People will prove Brenda Butterworth stole the Star Diamond on Gala Night while everyone watched the stage. You will hear her lies, her panic, and her frantic texts about hiding the stone. I am Victor Vane, I have never lost, and I will not start tonight.",
+ "prosecutionDirectPlan": {
+  "W1": [
+   "Detective Brisket, what did you find inside the display case on Gala Night?",
+   "How did Ms. Butterworth react when you questioned her after the theft?",
+   "What did her text messages reveal about hiding the stone?"
+  ],
+  "W2": [
+   "Ms. Shine, can you describe the Star Diamond displayed on Gala Night?",
+   "Who had access to the display case during rehearsals?",
+   "What was the museum's estimated value of the missing diamond?"
+  ]
+ }
+}

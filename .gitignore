@@ -2,6 +2,7 @@ node_modules/
 client/dist/
 desktop/node_modules/
 desktop/release/
+cases/.seen.json
 *.log
 .opencode/
 .env

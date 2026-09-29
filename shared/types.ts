@@ -75,8 +75,14 @@ export interface TranscriptEntry {
   speaker: "prosecutor" | "defense" | "judge" | WitnessId;
   kind: "opening" | "question" | "answer" | "objection" | "ruling" | "closing" | "note";
   text: string;
-  stricken?: boolean;
-  hiddenFromPlayer?: boolean;
+  stricken?: boolean;              // jury was instructed to disregard
+  hiddenFromPlayer?: boolean;      // prosecution opening
+}
+
+// Review 04 P0-1: the PLAYER view boundary (spec §9). Player-facing
+// print/render uses this; logs and Jev views keep the full entry.
+export function visibleToPlayer(entry: TranscriptEntry): boolean {
+  return entry.hiddenFromPlayer !== true;
 }
 
 export interface TrialState {

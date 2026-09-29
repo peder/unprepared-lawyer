@@ -154,6 +154,17 @@ export function fallbackResponse(req: JevRequest, model: string): JevResponse {
 }
 
 // ---- HttpJevClient (real) ----
+// Review 04 P2: one connect line per model, then per-call only under
+// PLAY_DEBUG / AUTHOR_DEBUG — the model tag drowned the author log.
+const loggedJevModels = new Set<string>();
+function jevLog(model: string) {
+  if (!loggedJevModels.has(model) || process.env.PLAY_DEBUG === "1" || process.env.AUTHOR_DEBUG === "1") {
+    loggedJevModels.add(model);
+    // eslint-disable-next-line no-console
+    console.log(`[jev] model=${model}`);
+  }
+}
+
 export class HttpJevClient implements JevClient {
   constructor(
     private apiKey: string = process.env.TYPESAFE_API_KEY ?? "",
@@ -198,8 +209,7 @@ export class HttpJevClient implements JevClient {
         }
         const json = (await res.json()) as unknown;
         const parsed = parseJevResponse(json, req.questions);
-        // eslint-disable-next-line no-console
-        console.log(`[jev] model=${parsed.model}`);
+        jevLog(parsed.model);
         return parsed;
       } catch (e) {
         lastErr = e;

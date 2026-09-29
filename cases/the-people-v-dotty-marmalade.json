@@ -1,0 +1,620 @@
+{
+ "caseTitle": "The People v. Dotty Marmalade",
+ "defendant": "Dotty Marmalade",
+ "charge": "Grand Larceny of the 200 Pound Golden Cheese Wheel",
+ "truth": "Dotty Marmalade, 67, did break into the Cheese Museum at 2:30 AM on June 14th, but she did not steal the 200 pound Golden Cheese Wheel. Facing disqualification from the National Yodel Finals for noise complaints, she was secretly housing an illegal screaming Amazon parrot named Maestro who perfectly mimics her championship yodel and ruins her practice. She broke the museum back window with her yodeling trophy to stash Maestro inside the echo proof cheese aging vault for the night while inspectors searched her apartment. She left at 2:47 AM with an empty cheese smelling duffel that had only carried parrot seed, leaving the back window propped open with a cheese pamphlet. At 3:10 AM, night janitor Lenny Blot, drowning in gambling debts, walked in through that open window and rolled the Golden Wheel out on the loading cart to his cousin fondue truck. Dotty was caught two blocks away at 3:05 AM with the squawking parrot, cheese dust on her shoes from the vault floor, but no grease, no truck, and no strength to lift 200 pounds. She is guilty of burglary, vandalism, and three counts of illegal exotic pet harboring but not grand cheese larceny.",
+ "facts": [
+  {
+   "id": "F01",
+   "statement": "The Cheese Museum displayed a 200 pound Golden Cheese Wheel valued at 60000 dollars for the Fondue Festival.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F02",
+   "statement": "The Wheel sat on a wheeled loading cart and constantly oozed greasy orange oil.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F03",
+   "statement": "The museum back window was smashed open during the night of June 14.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F04",
+   "statement": "Police found Dotty Marmalade's engraved yodeling trophy under the smashed window.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F05",
+   "statement": "Dotty's fingerprints were on the window frame and on the trophy base.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F06",
+   "statement": "Dotty was arrested two blocks away at 3:05 AM carrying a large cheese smelling duffel bag.",
+   "favors": "prosecution",
+   "importance": 2
+  },
+  {
+   "id": "F07",
+   "statement": "Cheese dust was on Dotty's shoes when she was arrested.",
+   "favors": "prosecution",
+   "importance": 1
+  },
+  {
+   "id": "F08",
+   "statement": "Dotty is 67 with severe arthritis and cannot lift more than 25 pounds without her wheeled walker.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F09",
+   "statement": "Lab tests found zero cheese grease on Dotty's clothes hands walker or duffel despite the Wheel oozing grease everywhere.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F10",
+   "statement": "The duffel bag smelled of cheese because Dotty had used it for cheese convention freebies for years.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F11",
+   "statement": "The duffel bag held only parrot seed feathers and a live screaming Amazon parrot named Maestro.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F12",
+   "statement": "Maestro perfectly mimics Dotty's championship yodel and cannot stop screaming it.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F13",
+   "statement": "Dotty faces disqualification from the National Yodel Finals after repeated noise complaints.",
+   "favors": "neutral",
+   "importance": 2
+  },
+  {
+   "id": "F14",
+   "statement": "City inspectors were scheduled to search Dotty's apartment for illegal pets on June 15.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F15",
+   "statement": "The museum cheese aging vault is echo proof and locks from the inside.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F16",
+   "statement": "A wedge of museum brie was missing a bite shaped like a parrot beak.",
+   "favors": "prosecution",
+   "importance": 1
+  },
+  {
+   "id": "F17",
+   "statement": "Security footage shows Dotty leaving the museum at 2:47 AM dragging an empty floppy duffel with no cart and no cheese.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F18",
+   "statement": "The same footage shows the Wheel still on its pedestal at 2:47 AM.",
+   "favors": "neutral",
+   "importance": 2
+  },
+  {
+   "id": "F19",
+   "statement": "The back window was propped open with a cheese pamphlet after Dotty left.",
+   "favors": "neutral",
+   "importance": 2
+  },
+  {
+   "id": "F20",
+   "statement": "The Wheel was gone at 3:10 AM when the motion camera recorded a loading cart rolling to the alley.",
+   "favors": "prosecution",
+   "importance": 1
+  },
+  {
+   "id": "F21",
+   "statement": "Night janitor Lenny Blot owed 40000 dollars in gambling debts to a fondue truck owner.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F22",
+   "statement": "Lenny called in sick that night but his keycard was used at 3:02 AM at the loading dock.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F23",
+   "statement": "The greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck with Wheel grease matching the museum Wheel.",
+   "favors": "defense",
+   "importance": 3
+  },
+  {
+   "id": "F24",
+   "statement": "Parrot droppings and green feathers were found inside the aging vault where Maestro spent the night.",
+   "favors": "defense",
+   "importance": 2
+  },
+  {
+   "id": "F25",
+   "statement": "Dotty told police she would never steal cheese because she is severely lactose intolerant.",
+   "favors": "neutral",
+   "importance": 1
+  },
+  {
+   "id": "F26",
+   "statement": "Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15.",
+   "favors": "defense",
+   "importance": 3
+  }
+ ],
+ "documents": [
+  {
+   "id": "D01",
+   "bin": "Box 7",
+   "title": "Police Report #4471",
+   "body": "POLICE REPORT #4471 - Box 7 - Filed by Off. P. Dribble #118 (night shift, Sector 4, rain drizzle, donut run delayed). Dispatch 3:12 AM June 14 re alarm at Cheese Museum, Fondue Festival setup still up, overtime approved (see form 12-B, coffee stain page 2). Responded with Off. Kwan, parking was terrible due to festival barricades and a double-parked accordion van. Premises: rear lot muddy, floodlight flickering (maintenance request #88 pending since March, not relevant). Found the museum back window smashed open during the night of June 14 (glass mostly inward, pamphlet bits stuck in frame, see photos 14-19, one blurry due to thumb). Under the smashed window on the mulch/glass mix lay Dotty Marmalade's engraved yodeling trophy (engraving looks like 1968 Regional Yodel Champion - D. Marmalade, clerk swears 1968, dented on the left upper cup handle from impact, ribbon still attached but soggy). Lab later confirmed Dotty's fingerprints were on the window frame and on the trophy base (plus two smudged partials, probably glove slip, see lab addendum C). At approx 3:05 AM, two blocks away on Chestnut (near the closed laundromat, dog barking, witness Mrs. Pell in curlers refused to give last name), Dotty was arrested carrying a large cheese smelling duffel bag (floppy, strap frayed, she was out of breath, asked for water twice). Booking notes: cheese dust was on Dotty's shoes when she was arrested (soles and laces, photos 22-23, also lint, gum wrapper in pocket unrelated). Lab tests found zero cheese grease on Dotty's clothes hands walker or duffel despite the Wheel oozing grease everywhere* (*maintenance log: Wheel sat on a wheeled loading cart and constantly oozed greasy orange oil, mops ordered weekly). Footnote review of security DVR (monitor flickers, timecode 6 min fast per tech, pizza box on desk): security footage shows Dotty leaving the museum at 2:47 AM dragging an empty floppy duffel with no cart and no cheese (waddling, stopping to adjust strap, no accomplice visible). The same footage shows the Wheel still on its pedestal at 2:47 AM (shiny under spotlight, pedestal rope intact). Forwarded to detectives, trophy bagged, window boarded with plywood (invoice attached).",
+   "factIds": [
+    "F02",
+    "F03",
+    "F04",
+    "F05",
+    "F06",
+    "F07",
+    "F09",
+    "F17",
+    "F18"
+   ]
+  },
+  {
+   "id": "D02",
+   "bin": "Evidence Bag 23",
+   "title": "Dented Yodeling Trophy with Fingerprints",
+   "body": "EVIDENCE BAG 23 - Tag: Dented Yodeling Trophy with Fingerprints - Intake by Tech R. Sallow, Basement Locker C, shelf 4 (next to leaking pickle jar, dehumidifier broken again). Item: one gold-tone cup trophy, 11 inches, heavy base, engraving reads 1969 Regional Yodel Champion - Dotty Marmalade (not 1968 as patrol wrote in Report #4471, their typo, see correction slip stapled crooked). Condition: dent on the right lower base rim, not left as patrol wrote (left upper cup handle only shows light scratching under magnifier, see sketch A), tarnish, sticky residue, ribbon mildewed. Context sticker: recovered under museum rear window per patrol. Item relates to Fondue Festival display case - The Cheese Museum displayed a 200 pound Golden Cheese Wheel valued at 60000 dollars for the Fondue Festival (poster still in lobby, coupon on back). Maintenance note taped to pedestal (copy in file): The Wheel sat on a wheeled loading cart and constantly oozed greasy orange oil (staff told to wear gloves, gloves box empty since May). Prints: Dotty's fingerprints were on the window frame and on the trophy base (confirmed by two techs, second tech was training, took extra hour, lunch was meatloaf). Lab addendum 6/16 (coffee ring, initialed M.K.): Lab tests found zero cheese grease on Dotty's clothes hands walker or duffel despite the Wheel oozing grease everywhere (swabs negative x14, control positive, machine recalibrated twice). Medical note attached from booking nurse (unrelated shingles cream request omitted): Dotty is 67 with severe arthritis and cannot lift more than 25 pounds without her wheeled walker (walker scuffed, tennis balls worn). Cross-ref Alley Impound 6/15: the greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck with Wheel grease matching the museum Wheel (orange drip trail, flies, ticket #991, tow driver complained). Newspaper clipping paper-clipped (Herald June 15, page 6, next to lost cat ad): Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15 (grand opening banner, extra napkins ordered). Hold for trial, do not polish.",
+   "factIds": [
+    "F01",
+    "F02",
+    "F05",
+    "F08",
+    "F09",
+    "F23",
+    "F26"
+   ]
+  },
+  {
+   "id": "D03",
+   "bin": "Box 7",
+   "title": "Security Stills 2:47 AM and 3:10 AM",
+   "body": "BOX 7 - FONDUE FESTIVAL SECURITY STILLS REVIEW - memo from intern Priya K. 6/18, annotated by Archivist Dobbs (please file, do not remove paperclip, coffee ring on page 2 is from 2019, ignore). Purpose: inventory of grainy prints for insurance, plus Festival committee wants nice photos of bunting, balloons, folding chairs, volunteer name tags, leftover cracker trays. Camera 4 has been faulty since March (pigeons nesting, janitor hit it with mop, time stamp drifts 2-3 min, maintenance log attached, 14 pages). Still A: timestamp 02:47:13 AM June 14, Rear Hall looking toward back window, partly blocked by Fondue Festival banner and a deflated cow balloon. Foreground is blurry but you can see visitor Dotty Marmalade in shawl with walker parked just out of frame (see property list for walker, squeaky wheel noted), dragging behind her an empty floppy duffel, mustard-yellow faded greenish-yellow canvas with one long strap (color uncertain due to night mode, see note), with no cart alongside her and no cheese bulk or wheel shape visible, just flat collapsed fabric bouncing (lab later called it empty, see Bag 24 file). In the background, slightly overexposed, the display for the Fondue Festival centerpiece is still occupied - the 200 pound Golden Cheese Wheel valued at 60000 dollars for the Fondue Festival can be seen on its pedestal, sitting as always on its wheeled loading cart and, per day staff, constantly oozing greasy orange oil (you can see a sheen even in B/W, footnote 3: oil stains cleaned daily). Intern note: I thought it was a hay bale at first. Still B: timestamp 03:10:22 AM same camera, much darker, motion blur. The pedestal is empty, the Wheel was gone at 3:10 AM when the motion camera recorded a loading cart rolling to the alley toward the loading dock, only a long smear and a wheel track visible, no person clearly identifiable (Dobbs says looks like a smudge, Priya says looks like sleeve). P.S. added 6/22 by Det. Haro, stapled: follow-up, the greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck two days later with Wheel grease matching the museum Wheel per garage swab, and - unrelated? - Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15 on a hand-painted sign (photo attached, misspelled Fondue as Fondu, plus menu lists grape soda, napkins extra). Filing fee $2, please return stapler.",
+   "factIds": [
+    "F01",
+    "F02",
+    "F17",
+    "F18",
+    "F20",
+    "F23",
+    "F26"
+   ]
+  },
+  {
+   "id": "D04",
+   "bin": "Evidence Bag 24",
+   "title": "Cheese Smelling Duffel Bag",
+   "body": "EVIDENCE BAG 24 - PROPERTY ROOM INTAKE FORM - Large Duffel, Officer R. Chavez, 6/14 04:15 AM (smell complaint: do not store near break room, officer allergic to feathers, sneezing fits). Item description: one large soft-sided duffel bag, faded navy-blue canvas with yellow trim and frayed strap (night lighting makes color look off in photos, looks greenish in Still A), cheese smelling strongly, zipper stuck with crumbly orange residue, plus inventory of pocket lint, bus transfer from 2019, 14 cheese convention pins, coupon for free brie. Chain of custody: recovered when Dotty Marmalade was arrested two blocks away at 3:05 AM on Walnut (corner by laundromat, she was asking for directions, out of breath) carrying a large cheese smelling duffel bag slung over walker handles. Arresting notes: cheese dust was on Dotty's shoes when she was arrested ( soles caked, lab said vault floor dust, see vault memo), she kept saying she would never steal cheese because she is severely lactose intolerant and it makes her sick, also crying about bird noise. Contents log (property clerk annoyed, bird would not shut up): the duffel bag held only parrot seed scattered everywhere, loose green and yellow feathers, droppings, and a live screaming Amazon parrot named Maestro with leg band MAESTRO-88, no cheese, no wheel chunk, no tools except seed scoop. Clerk addendum: bird perfectly mimics Dotty's championship yodel and cannot stop screaming it for hours, three shifts complained, earplugs requested. Background per interview: the duffel bag smelled of cheese because Dotty had used it for cheese convention freebies for years (2018-2023 Fondue Fest, Dairy Expo, she collected samples, never washed it, footnote: stains predate June). Lab attachment 6/20 (important, buried under feather allergy incident report): swabs found zero cheese grease on Dotty's clothes hands walker or duffel despite the Wheel oozing grease everywhere on cart and pedestal, tech wrote 'surprisingly clean, only seed oil.' Storage: keep ventilated, bird transferred to animal control, seed saved in jar.",
+   "factIds": [
+    "F06",
+    "F07",
+    "F09",
+    "F10",
+    "F11",
+    "F12",
+    "F25"
+   ]
+  },
+  {
+   "id": "D05",
+   "bin": "Box 12",
+   "title": "Lab Report #88 Grease Analysis Negative",
+   "body": "COUNTY FORENSIC LAB - Trace Evidence Section - Report #88 Grease Analysis Negative - Box 12 Fondue Festival Series - Analyst R. Patel, Tech L. Gomez - Date logged June 16, backlog 42 cases, coffee spill on centrifuge cleaned at 8:40am. Purpose: trace orange residue comparison, plus routine fiber check, plus calibration log for GC-MS unit 3 which was running hot all week and needed two restarts. Method: swabs taken with hexane solvent, cotton tips, control swabs from lab bench, blank runs, duplicate runs because first run smeared. Sample inventory: Item A clothes bag sealed, Item B hand swabs left and right, Item C walker handles and leg pads scraped, Item D duffel exterior and interior lining cuttings, Item E arrest shoes with dust taps, Item F reference grease from pedestal pan and control oil (the reference control confirms the museum Wheel sat on a wheeled loading cart and constantly oozed greasy orange oil, so thick we had to scrape the control swab twice and it still stained the vial cap). Results summary buried in solvent chatter: after three solvent washes and UV light, lab tests found zero cheese grease on Dotty's clothes hands walker or duffel despite the Wheel oozing grease everywhere, all readings at background zero, no orange fluorescence, no fatty acid match, supervisor initialed. Footnote 3 on shoes, often missed: cheese dust was on Dotty's shoes when she was arrested, light tan powder in tread, confirmed as dry cheese dust not grease, no oil halo. Olfactory note, not chemical: the duffel bag smelled of cheese because Dotty had used it for cheese convention freebies for years, per intake interview attached, which explains odor without residue. Second job same day, Item G: the greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck with Wheel grease matching the museum Wheel, thick orange smear on handle and bed rails, positive match on all three markers. Appendix: copy of Chirpy Mart receipt taped to file, 2 x 5lb Premium Parrot Seed at 14.99 each, store at 412 Main, plus lunch break 12:15 to 12:45, plus reminder to order more hexane.",
+   "factIds": [
+    "F02",
+    "F07",
+    "F09",
+    "F10",
+    "F23"
+   ]
+  },
+  {
+   "id": "D06",
+   "bin": "File Cabinet C",
+   "title": "Chirpy Mart Parrot Seed Receipts",
+   "body": "CHIRPY MART - File Cabinet C - Parrot Seed Receipts bundle, plus coupons, care leaflets, register tape, clerk memos, June 1-14 folder, water stained. Top sheet: Thank you for shopping Chirpy Mart, 412 Main St? actually letterhead says 418 Main St, open 9-9 weekdays, 10-6 Sunday, double stamps Tuesdays, no returns on live crickets. Receipt 06/02: 2 x 5lb Premium Parrot Seed at 13.99 each, 1 cuttlebone 2.49, total 30.47, cashier Dawn, loyalty member Dotty M., note says she always hauls cheese convention freebies for years in same tote, which is why (the duffel bag smelled of cheese because Dotty had used it for cheese convention freebies for years, per Dawn's handwritten aside, not fresh cheese). Second receipt 06/09: millet spray 4.99, cage liner 6.99, clerk wrote: police hold tag copy attached for seed refund request, contents listed as the duffel bag held only parrot seed feathers and a live screaming Amazon parrot named Maestro, no cheese blocks, just seed dust and green fluff. Margin doodle: TV on over bird aisle was playing noon news, clerk scribbled, they said security footage shows Dotty leaving the museum at 2:47 AM dragging an empty floppy duffel with no cart and no cheese, funny to picture in bird aisle. Care leaflet clutter: Amazon parrots scream at dawn, need toys, mist daily, vet Dr. Alvarez on Thursdays, seed sale ends Father's Day. Taped to back, greasy flyer from across street: GRAND OPENING Cousin Melty Special, Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15, all you can dip, bring this flyer. Bottom note: register short 4 dollars, mop broken, reorder mealworms, Dawn out June 15 for yodel contest traffic.",
+   "factIds": [
+    "F10",
+    "F11",
+    "F17",
+    "F26"
+   ]
+  },
+  {
+   "id": "D07",
+   "bin": "Box 3",
+   "title": "Window Latch and Cheese Pamphlet Prop",
+   "body": "CHEESE MUSEUM PROPERTY - BOX 3 INTAKE FORM (Window Latch + Pamphlet Prop) Logged 06/16 09:12 by P. Okafor, basement locker B-12 (see attached facilities memo re dehumidifier leak, thermostat stuck at 71F, and overtime request for weekend inventory). Contents listed: (1) lower sash latch assembly, white-painted aluminum 6-inch slide bolt with three screws (one stripped, rust grade 2, paint flaking), (2) folded paper pamphlet used as wedge, bagged flat with cardboard backing, (3) small envelope of glass dust, paint chips, and one pigeon feather probably old. Measurements appendix (pp.2-3) gives window opening 36x48 in double-hung north service alley, last washed in April per janitorial rota, putty cracked, sill chipped, latch screws mismatched (Phillips + flathead). Custodian note: these latches are replaced every 11 years per budget cycle, last order 2019, next due 2030, vendor changed twice. Incident reference buried in maintenance log copy: the museum back window was smashed open during the night of June 14 (officer noted glass both inward and outward, lower right frame splintered, latch bent). Day-shift note adds the lower sash was still wedged up about four inches at 04:15 AM photo, propped open with a cheese pamphlet left in the track after the earlier visitor had already left (night clerk initials). Pamphlet ID: Gift Shop SKU #441 'A Brief History of Brie,' 8-page tri-fold, blue border, coffee stain on p.3, lower corner water-warped from condensation, retail $0.00 free stack by door (gift shop had 2,000 copies, reprint cost $0.18 each, intern recount pending). Footnote 4 (video stills attached by intern T. who also logged 14 parking tickets that week): Still A timestamped 2:47 AM shows a woman dragging an empty floppy duffel with no cart and no cheese visible toward the alley exit (annotation 'leaving museum'), Still B same 2:47 AM timestamp shows through the hall doorway the big wheel still on its pedestal in the festival display. Transfer signed 06/17 to central cage, seal intact except for humidity curl.",
+   "factIds": [
+    "F03",
+    "F18"
+   ]
+  },
+  {
+   "id": "D08",
+   "bin": "Evidence Bag 31",
+   "title": "Loading Cart Grease Sample",
+   "body": "EVIDENCE BAG 31 - GREASE SMEAR / LOADING CART SAMPLE Lab Intake 06/17 14:05 by R. Vane, refrigerated locker 4 (temp log 38-41F, door left ajar Tuesday, sandwich complaint filed). Method: four cotton swabs, hexane rinse, GC-MS run #881-884, blank control, duplicate, technician lunch break 12:30-13:00 noted. Background (festival setup memo attached): the display wheel in question sat on a wheeled loading cart for the whole Fondue Festival and constantly oozed greasy orange oil that staff wiped twice daily (mop requisitions pp.5-6, complaints about smell, drip tray overflowing). Motion-camera log excerpt (camera 6, alley loading dock, battery low): at 3:10 AM the wheel was gone and the recording shows a loading cart rolling to the alley with a large round shape under tarp (operator note 'dark, blurry, cart squeak audible'). Recovery note (tow lot intake 06/15 08:40, driver complained about traffic on 5th): the greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck on Mercer (lot photo, oil drip trail 12 ft), lab match memo states wheel grease matching the museum wheel in color, salt content, and annatto marker (see chromatograms pp.9-11, cf. Box 3 pamphlet 'A Brief History of Brie,' 6-page tri-fold, green border per intake photo - filing discrepancy to resolve). Cross-comparison aside (clothing / control file 06/16): lab tests found zero cheese grease on Dotty's clothes hands walker or duffel despite the wheel oozing grease everywhere (all swabs negative, controls positive, second run confirmed). Clipping attached from Mercer Gazette 06/15 classifieds: Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15 (coupon cut out, grand opening banner). Seal signed, freezer burn noted, re-test request denied as moot.",
+   "factIds": [
+    "F02",
+    "F20",
+    "F23",
+    "F09",
+    "F26"
+   ]
+  },
+  {
+   "id": "D09",
+   "bin": "Box 9",
+   "title": "Keycard Log June 14 Loading Dock",
+   "body": "BOX 9 - MUSEUM LOADING DOCK KEYCARD LOG PRINTOUT - JUNE 14 (filed by R. Pell, dock supervisor, retired June 20th, about time too) - TRANSCRIBED WITH COFFEE STAINS INTACT\n\nThis is the complete swipe list, don't ask me to reprint it, the ribbon is dead. 06:12 AM catering napkins in (Sysco, driver late as usual, says Melty's brat plate downtown is now $9.95, robbery I tell you). 08:40 AM school tour out, one kid puked by the cheddar bust, cleaned. 02:15 PM pest control waved wand around, found nothing, charged $200. 06:47 PM day guard Haro clocks out, notes dock light flickers blue-white when it rains (it rained). 07:30 PM trash compactor jammed again.\n\nNIGHT SHIFT - motion + keycard merged:\n\n09:14 PM stray pigeon triggers alley cam, 14 sec clip saved (do not save pigeon clips anymore, memory full - Pell). 11:02 PM ice machine refill, temp 41F, whatever.\n\n02:47 AM side-door motion - cross-ref security desk sticky note (Jenna's handwriting): girl on monitor says old lady leaving, dragging empty floppy duffel, looks deflated, no cart with her, definitely no big cheese with her either, and - oh yeah - the big Wheel still sitting right there on its pedestal in the same frame, you can see it behind her. Filed as routine.\n\n03:02 AM loading dock keycard swipe - LENNY BLOT (janitor, night crew). Payroll says Lenny called in sick that whole night (stomach bug, sure, his third stomach bug this month), but his card definitely pinged the dock reader at 3:02 AM, I checked twice because the reader double-beeps for low battery and I thought it was an error.\n\n03:10 AM alley motion - long clip, 47 sec, loading cart rolling out toward alley, Wheel gone from hall after that (morning crew confirms empty pedestal). Guard note: thought it was linen service.\n\nFOOTNOTE added June 17 lab liaison: swab team confirms ZERO cheese grease on Dotty's clothes / hands / walker / duffel (all four swabbed, all clean), which is saying something given how that 200-lb Wheel sits on its little wheeled loading cart constantly sweating greasy orange oil all over everything within six feet. Lab tech wrote 'unnaturally clean' and underlined it. See box 12 for swabs.\n\nPell: dock door latch sticks if you slam it, use hip.",
+   "factIds": [
+    "F02",
+    "F09",
+    "F17",
+    "F18",
+    "F20",
+    "F22"
+   ]
+  },
+  {
+   "id": "D10",
+   "bin": "Misc. — DO NOT OPEN",
+   "title": "Cousin Melty Menu Golden Fondue 5 Dollars",
+   "body": "COUSIN MELTY FONDUE TRUCK - LAMINATED MENU (taken June 18, DO NOT OPEN - health hold, sauce spill) - FRONT:\n\nWELCOME CHEESEHEADS! Cousin Melty's! Since 2011! Home of the Squeaky Brat! PARKED CORNER OF 5TH & ALLEY (behind museum, best parking, ask Lenny!).\n\nREGULARS: Cheese Brat Plate $9.50 (with kraut, extra napkins 25c), Pretzel Stick $3.00, Onion Soup $4.25, Chocolate Fondue Cup $4.00, Soda $2.00. CASH ONLY, no whining. Tuesdays: Polka 2-for-1 (accordion guy is owner's nephew, tip him or else).\n\nBACK - HANDWRITTEN SPECIALS INSERT, taped over ketchup stain:\n\nWOW!!! NEW!!! Starting June 15 - GOLDEN CHEESE FONDUE $5 ALL WEEK!!! Real golden cheese!!! All week $5 $5 $5!!! Tell your friends!!! (in different marker: extended?? ask Melty). Drawing of cheese pot with rays coming out, smiley face.\n\nManager scribbles in margins (Melty?): need more cups if $5 thing keeps selling out like this, call Sysco, also fix wobbly tire, also pay cousin back??? Also: remember - Lenny still owes $40,000 in gambling debts to (owner) from poker + horses, told him work it off washing pots, he keeps calling in sick, ugh.\n\nHEALTH INSPECTOR STICKY NOTE attached June 19, half-torn: rear of truck - abandoned greasy loading cart found parked right behind the Cousin Melty Fondue Truck, wheels caked, samples taken - lab says Wheel grease on cart matches the museum Wheel grease (match confirmed). Cart impounded. Also: droppings near dumpster, tell Melty to clean. Truck awning smells like old socks.\n\nSmall print footer: No refunds after 9 PM. If you don't like yodeling, eat elsewhere. Go Fondue Festival!",
+   "factIds": [
+    "F21",
+    "F23"
+   ]
+  },
+  {
+   "id": "D11",
+   "bin": "Box 4",
+   "title": "Vault Feather and Dropping Photos",
+   "body": "BOX 4 - VAULT FEATHER & DROPPING PHOTOS - Facilities Envelope (DO NOT REMOVE PAPERCLIP)\nCustodian file - Cheese Museum Aging Vault - June backlog. Photos 1-12, plus humidity log.\n\nCover memo from R. Patel, Facilities, 6/19: Sorry for delay, we had the dehumidifier recall and the light order (60-watt bulbs, backordered, using 75s which run too hot) and the overtime dispute. Photos enclosed were taken 6/15 morning by maintenance after the Fondue Festival teardown was paused.\n\nPhoto 1: Vault door exterior (avocado paint, last painted 1978 per work order, hinges squeak). For reference the vault, per the 1982 spec sheet stapled here, is echo-proof for aging (cork + foam) and, annoyingly for lockouts, locks from the inside with a twist handle, so you need a second person outside. Maintenance hates it.\n\nPhotos 2-5: Floor of the aging vault, north corner near the brie racks. What looks like dust is catalogued as parrot droppings and clumps of green feathers found inside the aging vault where Maestro spent the night (lab tech counted 14 green feathers, plus seed husks, see baggie C). Vet card stapled to envelope lists Maestro as a 6-yr-old Amazon, very loud, owner D. Marmalade. Staff note: vacuum twice, mop with vinegar, air out.\n\nPhoto 6: Loading dock, empty. For scale only. Reminder that the big exhibit Wheel normally sat on its wheeled loading cart and constantly oozed greasy orange oil everywhere (see oil stain photos from May, same cart). Day-shift Had to put cardboard down daily.\n\nFootnote from evidence clerk 6/22 (attached lab addendum 4B, initialed): cross-ref to clothing exam - lab tests found zero cheese grease on Dotty's clothes, hands, walker or duffel despite the Wheel oozing grease everywhere, swabs negative x4. File with photos because vault floor swabs were also negative for oil, only droppings.\n\nPhoto 9 printout: Security stills review taped to back (grainy, time-stamped). Per night supervisor's scribble, security footage shows Dotty leaving the museum at 2:47 AM dragging an empty floppy duffel with no cart and no cheese (duffel collapsed flat, strap dragging), and the same footage shows the Wheel still on its pedestal at 2:47 AM in the background, blurry but visible. Supervisor circled it in red.\n\nLast page - dock recovery note 6/17: the greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck on Alder (driver said it had been there since morning, wheels locked), with Wheel grease matching the museum Wheel per lab (orange oil, same profile). Officer added that Lenny's cousin suddenly advertised Golden Cheese Fondue for 5 dollars all week starting June 15 (flyer attached, misspelled 'fondoo'). Facilities: please retrieve cart, clean wheels.",
+   "factIds": [
+    "F02",
+    "F09",
+    "F15",
+    "F17",
+    "F18",
+    "F23",
+    "F24",
+    "F26"
+   ]
+  },
+  {
+   "id": "D12",
+   "bin": "File Cabinet A",
+   "title": "Yodel Finals Noise Complaint Letters",
+   "body": "FILE CABINET A - YODEL FINALS NOISE COMPLAINT LETTERS - Bldg. 142 Tenants Assoc. (copies)\nCover sheet: For National Yodel Finals Eligibility Committee - re: Marmalade, Apt 4C.\n\nLetter 1, 4/22, Apt 3B (Mrs. Gable, handwritten, pink paper): Dear Manager, she practices at 6am again!!! That championship yodel over and over, walls shake. I have migraines. This is the 5th time I write. She says it is not her, it is the bird?? Please do something.\n\nLetter 2, 5/03, Apt 4A (typed, unsigned): Subject: SCREAMING. Day and night the same yodel riff. It cannot stop screaming it, I swear it goes for hours. We recorded 47 minutes straight on Tuesday. Enclosed vet printout from hallway trash says 7-year-old Amazon parrot named Maestro (green, loud). Manager note in margin: tenant denies owning pet.\n\nLetter 3, 5/28, Building Manager to Finals Committee: To whom it concerns, tenant Dotty Marmalade faces disqualification from the National Yodel Finals after repeated noise complaints (see attached log: 11 complaints Feb-June, 3 formal warnings). Committee rule 9b - conduct / nuisance. Hearing set July. She insists Maestro perfectly mimics Dotty's championship yodel and cannot stop screaming it, which is why she cannot practice properly (her words, lobby meeting 5/30). I told her to rehome it.\n\nLetter 4, 6/10, City Housing Office notice slipped under door (copy): NOTICE - City inspectors were scheduled to search Dotty's apartment for illegal pets on June 15 at 9am, per complaint #4481 (exotic bird, no permit). Please cage animals, provide paperwork. Failure = fine + referral.\n\nPost-it from public defender intake 6/16, attached to letters: client interview notes - D. says duffel examination will clear her - the duffel bag held only parrot seed, feathers and a live screaming Amazon parrot named Maestro, nothing else, check inventory. Also client told police she would never steal cheese because she is severely lactose intolerant (gets hives, carries pills), hates fondue smell, eats oat crackers. Intake officer wrote: verify pharmacy? Also tenant 2C says bird screams her yodel better than she does now - irrelevant.\n\nLast page: laundry room petition (8 signatures): No more 6am yodeling!!!",
+   "factIds": [
+    "F11",
+    "F13",
+    "F14",
+    "F25"
+   ]
+  },
+  {
+   "id": "D13",
+   "bin": "Box 7",
+   "title": "City Pet Inspector Search Notice June 15",
+   "body": "CITY DEPARTMENT OF ANIMAL CARE & LOUD NOISE ABATEMENT - NOTICE OF SCHEDULED APARTMENT SEARCH - Box 7, filed with Yodel Finals Liaison Office. Posted to: Apt 4B, tenant D. Marmalade. Date of posting: June 13 (please keep posted, do not paint over). Our front counter hours are 8AM-4PM Mon-Thu, closed Fridays for pigeon training, coffee machine broken since April, bring your own mug. Parking validation only for Lot C, elevator smells of bleach, take stairs. Reason for visit: follow-up on Noise File Y-88 (tenant, per liaison memo, faces disqualification from the National Yodel Finals after repeated noise complaints from neighbors on 2nd and 3rd floor, mostly about 6AM practice scales and a kettle). Search authorized: city inspectors were scheduled to search Dotty's apartment for illegal pets on June 15, please crate all legal cats, cage all legal canaries, leave keys with super, wear booties. What we look for: unlicensed ferrets, turtles, snakes, parrots, etc. - see reverse for $75/day boarding fees, $20 re-inspection fee, holiday surcharge. Intake cross-reference (do not remove staple): the duffel later inventoried at the precinct held only parrot seed, loose feathers, and a live screaming Amazon parrot named Maestro (seed spilled in locker, clean-up log attached). Addendum from Animal Tech R. Soto: Maestro perfectly mimics Dotty's championship yodel and cannot stop screaming it, even with towel over cage, earplugs in top drawer, recommend double-bagging. Night-desk courtesy note taped below (from museum guard, unrelated): reviewed security footage showing Dotty leaving the museum at 2:47 AM dragging an empty floppy duffel with no cart and no cheese on Tape 2A (guard initialed, coffee ring). Same note adds the same footage still shows the Wheel sitting on its pedestal at 2:47 AM behind the velvet rope, timestamp in corner. Found stapled to tenant door June 14 AM, logged as litter: a torn take-out flyer noting Lenny's cousin suddenly advertised Golden Cheese Fondue for $5 all week starting June 15, with a grease spot and a phone number. Counter copy on pale yellow carbon paper only - Janice refuses to order blue, per office memo March 2. Questions? Call ext. 441, leave message after beep (beep is loud).",
+   "factIds": [
+    "F13",
+    "F14",
+    "F11",
+    "F12",
+    "F17",
+    "F18",
+    "F26"
+   ]
+  },
+  {
+   "id": "D14",
+   "bin": "Evidence Bag 40",
+   "title": "Brie Wedge with Beak Bite",
+   "body": "EVIDENCE BAG 40 - PERISHABLE: BRIE WEDGE WITH BITE - Cheese Museum Gift Shop Inventory, logged June 14, 9:15 AM by Officer P. Dunn. Storage: keep in evidence fridge 2, middle shelf, next to soda, fridge hums and runs at 41 degrees, do not freeze, do not eat (Sergeant ate donut evidence in 2019, memo still posted). Bag contains one (1) partial wedge of museum brie in plastic wrap, sticker says FESTIVAL SAMPLE - NOT FOR SALE, weight noted as approx 14.5 oz on intake scale (scale wobbles, add crumb tray). Condition: soft, room-temp when found on pedestal edge near rope line, faint dust, one missing bite shaped exactly like a parrot beak, curved upper mandible mark, per photo card 40-A (compare to pigeon peck chart, not a match, mouse nibble chart also not a match). Lab side-note stapled (Chem Report 6/16, pale blue carbon copy - Janice ordered blue in March, yellow discontinued): background context that the Wheel sat on a wheeled loading cart and constantly oozed greasy orange oil, puddle under cart, rags in bin. Results: lab tests found zero cheese grease on Dotty's clothes, hands, walker or duffel despite the Wheel oozing grease everywhere, swabs negative x4, control swab from cart positive, analyst initials. Custodian aside, handwritten: greasy loading cart was found abandoned behind the Cousin Melty Fondue Truck in the alley off 5th, wheels stuck, with Wheel grease matching the museum Wheel per comparison smear (see Bag 41). Vault cleaning slip attached from June 15 AM shift: parrot droppings and green feathers were found inside the aging vault where Maestro spent the night, swept into envelope, deodorizer used, lock oiled. Disposition: keep frozen after photos, discard after festival, do not return to museum shop.",
+   "factIds": [
+    "F16",
+    "F02",
+    "F09",
+    "F23",
+    "F24"
+   ]
+  }
+ ],
+ "witnesses": [
+  {
+   "id": "W1",
+   "name": "Officer Tina Clampett",
+   "role": "Arresting officer who found Dotty with the squawking duffel bag",
+   "calledBy": "prosecution",
+   "personality": "Tough, by-the-book patrol veteran who loves a clean collar and hates weird paperwork. Prickly and proud of her arrest record, but gets loud and flustered fast when rattled by screaming animals.",
+   "speechStyle": "Blunt cop-speak with radio codes and formal 'ma'am' politeness, short clipped sentences that get louder and faster when excited",
+   "relationshipToCase": "Arresting officer who stopped Dotty two blocks from the museum at 3:05 AM and seized the squawking duffel bag, called by prosecution to prove possession",
+   "knows": [
+    "F06",
+    "F11",
+    "F12"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F09",
+     "lie": "Dotty's hands, walker, and duffel were smeared with fresh greasy orange cheese oil from the Golden Wheel",
+     "reason": "To make the grand cheese larceny charge stick and justify a felony arrest, earn a commendation, and cover that she never properly checked for grease at the scene"
+    }
+   ],
+   "doesNotKnow": "Has no idea why Dotty was at the museum, about the city inspectors search on June 15, the echo-proof aging vault, the 2:47 AM footage showing the Wheel still there, or anything about Lenny Blot, his keycard use at 3:02 AM, gambling debts, or the fondue truck",
+   "secret": "Secretly terrified of birds since a parrot bit her ear as a rookie, and she still hears Maestro's screaming yodel in her nightmares"
+  },
+  {
+   "id": "W2",
+   "name": "Dr Henrietta Curd",
+   "role": "Museum curator who values the Wheel and confirms the break-in",
+   "calledBy": "prosecution",
+   "personality": "Pompous and fiercely protective of the Cheese Museum's reputation. She is dramatic and status-conscious, treating the Golden Wheel as her personal masterpiece and Dotty as a vandal who violated her sanctuary.",
+   "speechStyle": "Formal, academic and flowery with condescending museum-docent flair, lots of valuation jargon and outraged asides about barbarians and yodelers.",
+   "relationshipToCase": "Curator of the Cheese Museum who appraised and displayed the Golden Cheese Wheel and discovered the break-in aftermath, called by prosecution to establish value and forced entry.",
+   "knows": [
+    "F01",
+    "F02",
+    "F03",
+    "F04"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F18",
+     "lie": "The Wheel was already gone from its pedestal when Dotty left at 2:47 AM — I reviewed the monitor myself and saw an empty pedestal.",
+     "reason": "To make the break-in and the theft look like one single crime by Dotty so the museum can claim the $60000 insurance payout and hide that the window was left propped open and the Wheel sat unguarded for over 20 minutes after Dotty left."
+    }
+   ],
+   "doesNotKnow": "She knows nothing about Maestro the parrot mimicking Dotty's yodel, the noise complaints and June 15 apartment inspection, Dotty's arthritis and 25-pound limit, the lab report showing zero grease on Dotty, that the duffel held only parrot seed, that the window was propped with a pamphlet, or anything about Lenny Blot's debts, his 3:02 AM keycard use, the 3:10 AM cart to the alley, or the fondue truck.",
+   "secret": "She once got drunk at a Fondue Festival tasting, locked herself inside the echo-proof aging vault, and had to be hammered out by the janitor — she is terrified the board will hear about it."
+  },
+  {
+   "id": "W3",
+   "name": "Lenny Blot",
+   "role": "Night janitor with gambling debts whose keycard was used at 3:02 AM",
+   "calledBy": "defense",
+   "personality": "Nervous and shifty, always fidgeting like he wants to be anywhere else. He tries to sound cooperative and helpful while dodging any direct answers about that night.",
+   "speechStyle": "Fast, mumbly rambling with lots of filler, nervous laughs, short defensive denials, and working-class janitor slang",
+   "relationshipToCase": "Night janitor at the Cheese Museum whose keycard was used at the loading dock at 3:02 AM, called by the defense",
+   "knows": [
+    "F20",
+    "F21",
+    "F22",
+    "F23",
+    "F26"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F22",
+     "lie": "I was home sick in bed all night and must have lost my keycard days ago, somebody else must have used it.",
+     "reason": "To hide that he was at the museum at 3:02 AM"
+    },
+    {
+     "factId": "F21",
+     "lie": "I only owe like a couple hundred bucks on football, no big deal, nothing to do with no fondue truck.",
+     "reason": "To hide his $40,000 gambling debt motive for stealing the Wheel"
+    },
+    {
+     "factId": "F20",
+     "lie": "I never touched no loading cart and I don't know nothing about any truck in the alley.",
+     "reason": "To deny rolling the Golden Wheel out to his cousin's truck at 3:10 AM"
+    }
+   ],
+   "doesNotKnow": "He knows nothing about Dotty's break-in, her yodeling trophy, the parrot Maestro, the echo-proof vault, the cheese dust, or why the back window was propped open with a pamphlet.",
+   "secret": "He regularly naps inside the cheese aging vault on shift because it's quiet and he can lock it from the inside."
+  },
+  {
+   "id": "W4",
+   "name": "Maestro the Parrot",
+   "role": "Illegal screaming parrot who mimics Dotty's yodel nonstop",
+   "calledBy": "defense",
+   "personality": "Maestro is an extremely overconfident feathered diva who is absolutely convinced he is the real National Yodel Champion. He screams louder the more attention he gets and refuses to stop for judges, lawyers, or anyone. Despite knowing almost nothing about the case, he performs like he is the star witness.",
+   "speechStyle": "Screams Dotty's championship yodel 'YODEL-AY-HEE-OOOO!' nonstop at full volume, interrupts all questions with squawks, wing-flapping and shrieks of 'MAESTRO! MAESTRO! BRAVO!'",
+   "relationshipToCase": "Dotty Marmalade's illegally harbored pet Amazon parrot who was smuggled to the Cheese Museum in her duffel bag on June 14th to hide him from inspectors",
+   "knows": [
+    "F12"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F16",
+     "lie": "I never bit that brie! That bite was already there! YODEL-AY!",
+     "reason": "Wants to look innocent and avoid blame for eating museum cheese while locked in the vault"
+    }
+   ],
+   "doesNotKnow": "Everything about the break-in, smashed window, trophy, fingerprints, times, loading cart, grease, Golden Wheel theft, janitor Lenny Blot, gambling debts, fondue truck, or Dotty's arrest - he is a parrot who only knows how to scream",
+   "secret": "May suddenly blurt out in Dotty's voice: 'Shut up Maestro! Hide in the closet! The inspectors are coming tomorrow!' revealing how long Dotty hid him from noise complaints"
+  },
+  {
+   "id": "W5",
+   "name": "Cousin Melty Fonda",
+   "role": "Fondue truck owner suddenly selling cheap Golden Cheese Fondue",
+   "calledBy": "defense",
+   "personality": "Loud, greasy-aproned showman who treats every question like a sales pitch for his truck. Sweaty and fidgety when pressed about sourcing, he brags about his 'business genius' to cover his nerves. Desperately wants to look like a legitimate entrepreneur, not a fence for stolen cheese.",
+   "speechStyle": "Rapid-fire street-vendor patter with 'hey cousin, listen, five bucks, can't beat it!' energy, lots of fondue puns and nervous laughter, calls everyone boss or cousin",
+   "relationshipToCase": "Owner-operator of the Cousin Melty Fondue Truck and cousin of night janitor Lenny Blot; called by defense after police found the museum's greasy loading cart behind his truck just as he started selling cheap Golden Cheese Fondue",
+   "knows": [
+    "F21",
+    "F23",
+    "F26",
+    "F02"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F23",
+     "lie": "That greasy cart was already dumped in the alley, I never touched it and don't know nothing about wheel grease.",
+     "reason": "To deny receiving the stolen Wheel and using the museum loading cart"
+    },
+    {
+     "factId": "F26",
+     "lie": "My $5 Golden Cheese Fondue all week is just my own cheddar-and-turmeric wholesale special, nothing to do with any museum wheel.",
+     "reason": "To explain the sudden cheap price without admitting he melted down the stolen 200-pound Wheel"
+    },
+    {
+     "factId": "F21",
+     "lie": "Lenny's gambling debt to me is old news, he don't owe me nothing now, we barely talk business.",
+     "reason": "To hide his leverage over Lenny and his motive for taking the Wheel as payment"
+    }
+   ],
+   "doesNotKnow": "Never went inside the museum, never saw Dotty, her trophy, the smashed window, the vault, Maestro the parrot, or the security footage; knows nothing about her arthritis, lactose intolerance, noise complaints, inspectors, fingerprints, or lab tests.",
+   "secret": "Has been running the truck for three months with no health permit and melts bulk cheese in his home bathtub, terrified health inspectors will shut him down if he draws attention."
+  },
+  {
+   "id": "W6",
+   "name": "Agatha Shush",
+   "role": "Yodel Finals judge who reported Dotty for noise violations",
+   "calledBy": "defense",
+   "personality": "Pompous, overconfident ex-yodel diva who believes her ears are scientifically infallible. She lectures everyone loudly and is extremely confident she is always right, even about things she never actually saw.",
+   "speechStyle": "Loud, shrill and condescending with exaggerated diction; constantly shushes people mid-sentence and refers to herself as 'Judge Shush'",
+   "relationshipToCase": "National Yodel Finals judge who filed repeated noise complaints against Dotty Marmalade, called by the defense to establish the disqualification threat",
+   "knows": [
+    "F13"
+   ],
+   "willLieAbout": [
+    {
+     "factId": "F12",
+     "lie": "That non-stop championship yodeling from Dotty's apartment was Dotty herself practicing, not a parrot - Judge Shush would know a real yodel",
+     "reason": "to protect her expert reputation and justify her complaints; refuses to admit a screaming parrot fooled her"
+    }
+   ],
+   "doesNotKnow": "Knows nothing about the Cheese Museum break-in, the smashed window, the trophy, the duffel bag, the vault, the cheese dust or grease, the security footage timeline, or Lenny Blot and the fondue truck",
+   "secret": "She was almost disqualified herself years ago for lip-syncing a yodel finale with a hidden tape recorder"
+  },
+  {
+   "id": "W7",
+   "name": "Pete Pamplemousse",
+   "role": "Security guard who monitors museum cameras and timestamps",
+   "calledBy": "defense",
+   "personality": "Pete is a plodding, by-the-book night guard obsessed with timestamps and his logbook. He is earnest, literal, and quietly proud that his cameras caught the real timeline, and he wants to help the defense get it right.",
+   "speechStyle": "Flat procedural monotone, always cites exact times and camera numbers, e.g. 'At oh-two-forty-seven, Camera Four shows...'",
+   "relationshipToCase": "Museum night-shift security guard who monitored the gallery and alley cameras on the night of June 14th",
+   "knows": [
+    "F17",
+    "F18",
+    "F20",
+    "F09"
+   ],
+   "willLieAbout": [],
+   "doesNotKnow": "Never saw who smashed the window or propped it, never entered the vault or touched the trophy, duffel, or cart, and knows nothing about the parrot, the vault droppings, the grease tests, Dotty's arthritis or lactose intolerance, the apartment inspectors, or Lenny Blot's debts, keycard, or fondue truck.",
+   "secret": "Dozed off from midnight to 2:15 AM watching a cooking show on his phone and is terrified he'll be fired if anyone asks, so he over-repeats his 2:47 and 3:10 timestamps."
+  }
+ ],
+ "judge": {
+  "name": "Judge Marjorie Hammerpants",
+  "persona": "A former circus clown turned judge who runs her courtroom like a variety show but hates liars and lactose excuses and bangs her rubber gavel for dramatic effect while quoting circus rules",
+  "strictness": 4,
+  "basePatience": 75
+ },
+ "prosecutor": {
+  "name": "Preston Squeed",
+  "persona": "A pompous cheese law specialist who treats every crumb as sacred evidence and objects loudly to protect dairy justice while secretly fearing parrots since a childhood bird incident at the zoo",
+  "objectionTendency": 4
+ },
+ "jurors": [
+  {
+   "id": "J1",
+   "label": "Retired Sea Captain",
+   "persona": "Sailed 40 years and never lost a sock. Writes everything in a logbook, especially what the judge says to ignore. Believes stricken testimony is buried treasure. Yells Objection at seagulls. Naps with one eye open."
+  },
+  {
+   "id": "J2",
+   "label": "Kindergarten Teacher",
+   "persona": "Believes judges are like crossing guards but holier. If the judge says disregard, she instantly forgets it forever. Takes notes in crayon. Gives gold stars for good objections. Shushes whispering lawyers."
+  },
+  {
+   "id": "J3",
+   "label": "Dog Groomer",
+   "persona": "Loves all animals more than most humans. Cries if anyone mentions a sad poodle. Already decided Dotty seems nice because she smells like biscuits. Distrusts anyone who dislikes squeaky toys."
+  },
+  {
+   "id": "J4",
+   "label": "Night-Shift Security Guard",
+   "persona": "Works nights, sleeps nowhere. Dozes off by 10am daily and wakes up nodding confidently. Has missed entire witnesses but pretends he did not. Snores softly during objections. Dreams in surveillance footage."
+  },
+  {
+   "id": "J5",
+   "label": "Tax Accountant",
+   "persona": "Remembers every number ever, especially stricken ones. Heard it once, filed it forever. Says disregard is not a recognized accounting principle. Highlights transcripts. Finds defendant deductions suspicious."
+  },
+  {
+   "id": "J6",
+   "label": "Amateur Magician",
+   "persona": "Trusts judges completely because robes are basically wizard capes. Believes sustained means the magic worked. Tries to guess where the gavel went. Whispers abracadabra when evidence is admitted."
+  },
+  {
+   "id": "J7",
+   "label": "Retired Librarian",
+   "persona": "Never forgets stricken material and reshelves it mentally under DRAMA. Shushes the bailiff. Keeps a secret diary titled Things I Was Told Not To Remember. Knows overdue justice accrues fines."
+  },
+  {
+   "id": "J8",
+   "label": "Pizza Delivery Driver",
+   "persona": "Judges everything in 30 minutes or less. Loves animals, especially ones that tip in pepperoni. Thinks court would be faster with scooters. Falls asleep only if someone mentions warm breadsticks."
+  },
+  {
+   "id": "J9",
+   "label": "Cat Rescue Volunteer",
+   "persona": "Has nine cats and fosters guilt. If Dotty likes cats, she is innocent. If not, still maybe innocent. Brings tuna sandwiches for lunch. Hisses softly when lawyers argue too loud."
+  },
+  {
+   "id": "J10",
+   "label": "College Football Referee",
+   "persona": "Trusts judges completely because stripes recognize stripes. Throws a mental flag on hearsay. Yells disregard means down is replayed. Takes bathroom breaks like timeouts. Never explains his calls."
+  },
+  {
+   "id": "J11",
+   "label": "Sleep-Deprived New Dad",
+   "persona": "Has not slept since 2023. Dozes off mid-sentence and wakes up saying uh-huh, guilty, I mean sorry. Rocks his chair like a stroller. Finds lullabies in legal jargon. Dreams of uninterrupted testimony."
+  },
+  {
+   "id": "J12",
+   "label": "Gossip Podcaster",
+   "persona": "Never forgets stricken material, it is her season finale. Live-tweets mentally. Promised the judge she would disregard, fingers crossed behind back. Loves Dotty's hats. Here for justice and juicy twists."
+  }
+ ],
+ "prosecutionOpening": "Ladies and gentlemen of the jury, I am Preston Squeed, and dairy justice is my calling. The evidence will prove that Dotty Marmalade broke into the Cheese Museum at 2:30 AM on June 14th, smashed the back window with her yodeling trophy, and stole the 200-pound Golden Cheese Wheel. Officer Tina Clampett will testify she stopped Ms. Marmalade two blocks away at 3:05 AM with cheese dust on her shoes and a cheese-smelling duffel. Dr. Henrietta Curd will confirm those traces match the aging vault floor exactly. I have personally collected, bagged, and labeled forty-seven crumbs from that vault, and each one points to her. Follow the crumbs and convict.",
+ "prosecutionDirectPlan": {
+  "W1": [
+   "Officer Clampett, where and when did you first stop Ms. Marmalade that night?",
+   "What did you observe on her shoes and inside her duffel bag?",
+   "How far from the museum was she when you detained her?"
+  ],
+  "W2": [
+   "Dr Curd, what did your analysis show about dust found on Ms. Marmalade's shoes?",
+   "Did those samples match the floor of the cheese aging vault?",
+   "Could one person move a 200-pound wheel using the loading cart?"
+  ]
+ }
+}

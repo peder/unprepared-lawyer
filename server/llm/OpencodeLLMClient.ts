@@ -5,6 +5,9 @@
 // Falls back to StubLLMClient templates on timeout/parse failure (spec §15).
 
 import { spawn } from "child_process";
+import { writeFileSync, unlinkSync } from "fs";
+import { tmpdir } from "os";
+import { join } from "path";
 import {
   StubLLMClient,
   validateWitnessVoice,
@@ -24,17 +27,34 @@ export type OpencodeRunner = (args: { model: string; prompt: string; timeoutMs: 
 
 /** Default runner: `opencode run -m <model> --format json <prompt>`, returns concatenated text parts. */
 export async function defaultOpencodeRunner({ model, prompt, timeoutMs }: { model: string; prompt: string; timeoutMs: number }): Promise<string> {
+  // Review 03 P2: Windows caps command lines at ~32k chars and author prompts
+  // grow with the fact list — large prompts go via a temp file attachment.
+  let args = ["run", "-m", model, "--format", "json", prompt];
+  let tmpFile: string | null = null;
+  if (prompt.length > 24000) {
+    tmpFile = join(tmpdir(), `ulaw-prompt-${Date.now()}-${Math.floor(Math.random() * 1e6)}.txt`);
+    writeFileSync(tmpFile, prompt);
+    args = ["run", "-m", model, "--format", "json", "-f", tmpFile, "Read the attached prompt file and follow its instructions exactly. Output JSON only, as specified."];
+  }
   return new Promise((resolve, reject) => {
     // No shell: args pass straight to the process, so quotes in prompts can't break out.
-    const child = spawn("opencode", ["run", "-m", model, "--format", "json", prompt], {
+    const child = spawn("opencode", args, {
       stdio: ["ignore", "pipe", "pipe"],
       shell: false,
     });
+    const done = (fn: () => void) => {
+      if (tmpFile) {
+        try {
+          unlinkSync(tmpFile);
+        } catch { /* best effort */ }
+      }
+      fn();
+    };
     let out = "";
     let err = "";
     const kill = setTimeout(() => {
       child.kill();
-      reject(new Error(`opencode timed out after ${timeoutMs}ms (model=${model})`));
+      done(() => reject(new Error(`opencode timed out after ${timeoutMs}ms (model=${model})`)));
     }, timeoutMs);
     child.stdout.on("data", (d: Buffer) => {
       out += d.toString();
@@ -44,18 +64,19 @@ export async function defaultOpencodeRunner({ model, prompt, timeoutMs }: { mode
     });
     child.on("error", (e) => {
       clearTimeout(kill);
-      reject(new Error(`opencode spawn failed: ${(e as Error).message}. Is opencode on PATH?`));
+      done(() => reject(new Error(`opencode spawn failed: ${(e as Error).message}. Is opencode on PATH?`)));
     });
     child.on("close", (code) => {
       clearTimeout(kill);
       if (code !== 0 && !out.trim()) {
-        reject(new Error(`opencode exited ${code}: ${err.slice(0, 500)}`));
+        done(() => reject(new Error(`opencode exited ${code}: ${err.slice(0, 500)}`)));
         return;
       }
       try {
-        resolve(extractText(out));
+        const text = extractText(out);
+        done(() => resolve(text));
       } catch (e) {
-        reject(e);
+        done(() => reject(e));
       }
     });
   });
@@ -111,21 +132,10 @@ export class OpencodeLLMClient implements LLMClient {
     return this.generate(prompt, model ?? DEFAULT_AUTHOR_MODEL);
   }
 
-  /** AuthorTransport adapter: `client.author()` plugs straight into authorCase(). */
+  /** AuthorTransport adapter: `client.author()` plugs straight into authorCase().
+   *  Single attempt — retry policy (with validation feedback) lives in completeJson. */
   author(model: string = DEFAULT_AUTHOR_MODEL, timeoutMs: number = AUTHOR_TIMEOUT_MS): { complete: (prompt: string) => Promise<string> } {
-    return {
-      complete: async (prompt: string): Promise<string> => {
-        let lastErr: unknown;
-        for (let attempt = 0; attempt < 2; attempt++) {
-          try {
-            return await this.runner({ model, prompt, timeoutMs });
-          } catch (e) {
-            lastErr = e;
-          }
-        }
-        throw lastErr;
-      },
-    };
+    return { complete: (prompt: string) => this.runner({ model, prompt, timeoutMs }) };
   }
 
   private async generate(prompt: string, model: string): Promise<string> {

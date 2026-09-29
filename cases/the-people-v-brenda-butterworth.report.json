@@ -1,0 +1,46 @@
+{
+ "title": "The People v. Brenda Butterworth",
+ "truthVariant": "other_crime",
+ "timingsMs": {
+  "core": 65596,
+  "stage2": 196988,
+  "doccheck": 1029,
+  "truthcheck": 217
+ },
+ "retries": {},
+ "droppedClaims": {},
+ "importance3": [
+  {
+   "id": "F08",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  },
+  {
+   "id": "F09",
+   "inDoc": true,
+   "known": true,
+   "repaired": true
+  },
+  {
+   "id": "F10",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  },
+  {
+   "id": "F11",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  }
+ ],
+ "tokenEstimate": 11999,
+ "jevModel": "jev-latest",
+ "quality": "ok",
+ "qualityReasons": [],
+ "truthCheck": {
+  "guiltyOfCharge": 0.03,
+  "guiltyOfSomethingElse": 0.97
+ }
+}

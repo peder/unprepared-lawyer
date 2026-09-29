@@ -47,6 +47,7 @@ process.on("unhandledRejection", (e) => {
 import { TrialEngine } from "../server/trial/TrialEngine.js";
 import type { QuestionResult } from "../server/trial/TrialEngine.js";
 import { createJevClient } from "../server/jev/factory.js";
+import { visibleToPlayer } from "@shared/types.js";
 import { createLLMClient } from "../server/llm/OpencodeLLMClient.js";
 import { generateCase } from "../server/gen/generateCase.js";
 import { CONFIG } from "../shared/config.js";
@@ -87,27 +88,37 @@ function bar(p: number, w = 20): string {
 }
 
 async function main() {
-  if (typeof (inStream as unknown as { ref?: unknown }).ref === "function") inStream.ref();
-  const caseFile = await generateCase();
-  // P0-2: shared factory. Default is LIVE when TYPESAFE_API_KEY is set, else mock.
+  inStream.ref?.();
+  // P1-3 (review 04): wiring banner BEFORE any wait — the player knows the
+  // setup (and the possible Gerald fallback) before a multi-minute author.
   const { client: jev, banner: jevBanner } = createJevClient();
   const llm = createLLMClient();
   const llmBanner = `LLM: ${(process.env.LLM_PROVIDER ?? "stub").toLowerCase() === "opencode" ? `opencode/${process.env.LLM_VOICE_MODEL ?? "muse-spark-1.3-contributor-free"}` : "stub"}`;
-  console.log(`\n[${jevBanner} | ${llmBanner}]`);
+  console.log(`\n[${jevBanner} | ${llmBanner} | CASE_SOURCE=${process.env.CASE_SOURCE ?? "fixture"}]`);
+  const caseFile = await generateCase();
   const eng = new TrialEngine(caseFile, jev, llm, {
     seed: Date.now() % 2 ** 31,
     onEvent: (e) => {
       logRecord({ kind: "event", event: e });
       if (e.kind === "transcript") {
         const t = e.entry;
+        if (!visibleToPlayer(t)) return; // P0-1: blind means blind; the log keeps it
         const tag = t.stricken ? " [STRICKEN]" : "";
-        if (t.kind === "answer") console.log(`    ${witnessName(t.speaker)}: ${t.text}${tag}`);
-        else if (t.speaker === "prosecutor" && t.kind === "question") console.log(`  PROSECUTOR: ${t.text}${tag}`);
-        else console.log(`  ${speaker(t.speaker)}: ${t.text}${tag}`);
+        if (t.kind === "answer" && pendingPQ !== null) {
+          // Q/A stanza: restate the pair after the window closes (P2).
+          console.log(`  PROSECUTOR: ${pendingPQ}\n    ${witnessName(t.speaker)}: ${t.text}${tag}`);
+          pendingPQ = null;
+        } else if (t.speaker === "prosecutor" && t.kind === "question") {
+          pendingPQ = t.text;
+          console.log(`  PROSECUTOR: ${t.text}${tag}`);
+        } else if (t.kind === "answer") {
+          console.log(`    ${witnessName(t.speaker)}: ${t.text}${tag}`);
+        } else console.log(`  ${speaker(t.speaker)}: ${t.text}${tag}`);
       }
       if (e.kind === "log") console.log(`  * ${e.text}`);
     },
   });
+  let pendingPQ: string | null = null;
   const witnessName = (id: string) => caseFile.witnesses.find((w) => w.id === id)?.name.toUpperCase() ?? id;
   const hud = () => {
     const s = eng.status();
@@ -117,16 +128,25 @@ async function main() {
     if (s.phase === "P_DIRECT" || s.phase === "D_CROSS") extra = ` | your objections: ${s.objectionsLeft}`;
     else if (s.phase === "P_CROSS" || s.phase === "D_DIRECT") extra = ` | your questions: ${s.questionsLeftForThisWitness}/3`;
     else if (s.phase === "P_READ" || s.phase === "D_READ" || s.phase === "FINAL_READ") extra = ` | reads left: ${s.readsLeft}`;
-    console.log(`\n-- [${s.phase}] patience ${bar(eng.state.judgePatience / 100)} ${eng.state.judgePatience} | jury guilty ${bar(avg)} ${avg.toFixed(2)}${extra} --`);
+    console.log(`\n-- [${s.phase}] patience ${bar(eng.state.judgePatience / 100)} ${eng.state.judgePatience} | jury P(guilty) ${bar(avg)} ${avg.toFixed(2)}${extra} --`);
   };
   let lastLean: Record<string, number> = {};
+  let priorsShown = false;
   const reactions = () => {
-    const moved = caseFile.jurors.filter((j) => Math.abs((eng.state.jurorLeanings[j.id] ?? 0.5) - (lastLean[j.id] ?? 0.5)) >= 0.05);
     const avg = avgLean(eng);
-    const prev = Object.values(lastLean).length ? Object.values(lastLean).reduce((a, b) => a + b, 0) / 12 : avg;
-    const delta = avg - prev;
-    const arrow = Math.abs(delta) < 0.005 ? "=" : delta > 0 ? `▲${Math.round(delta * 100)}` : `▼${Math.round(-delta * 100)}`;
-    console.log(`   jury ${prev.toFixed(2)} → ${avg.toFixed(2)} (${arrow})` + (moved.length ? "  " + moved.map((j) => `${j.id}${eng.state.jurorReactions[j.id]}${Math.round(eng.state.jurorLeanings[j.id] * 100)}`).join(" ") : ""));
+    const moved = caseFile.jurors.filter((j) => Math.abs((eng.state.jurorLeanings[j.id] ?? 0.5) - (lastLean[j.id] ?? 0.5)) >= 0.05);
+    const movedStr = moved.length ? "  " + moved.map((j) => `${j.id}${eng.state.jurorReactions[j.id]}${Math.round(eng.state.jurorLeanings[j.id] * 100)}`).join(" ") : "";
+    if (!priorsShown) {
+      // First line is priors, not a delta — deltas start at the player's opening.
+      priorsShown = true;
+      console.log(`   jury priors P(guilty) ${avg.toFixed(2)}${movedStr}`);
+    } else {
+      const prev = Object.values(lastLean).reduce((a, b) => a + b, 0) / 12;
+      const delta = avg - prev;
+      // Down-is-good, stated outright: the room moved the defense's way.
+      const side = Math.abs(delta) < 0.005 ? "(holding)" : delta < 0 ? `(defense ▲${Math.round(-delta * 100)})` : `(defense ▼${Math.round(delta * 100)})`;
+      console.log(`   jury P(guilty) ${prev.toFixed(2)} → ${avg.toFixed(2)} ${side}${movedStr}`);
+    }
     lastLean = { ...eng.state.jurorLeanings };
   };
 
@@ -138,9 +158,10 @@ async function main() {
   reactions();
 
   const opening = await ask(`\nOPENING (blind, ≤${CONFIG.MAX_WORDS_OPENING} words)\n> `);
+  const oWords = opening.split(/\s+/).filter(Boolean).length;
   const oAvg = avgLean(eng);
   const oRes = await eng.submitOpening(opening || "...");
-  console.log(`  (the room reacts: claim=${oRes.claimStatus}, tone=${oRes.impropriety}; jury ${oAvg.toFixed(2)}→${avgLean(eng).toFixed(2)})`);
+  console.log(`  (${oWords}/${CONFIG.MAX_WORDS_OPENING} words${oRes.truncated ? " — TRUNCATED to the cap" : ""}; the room reacts: claim=${oRes.claimStatus}, tone=${oRes.impropriety}; jury ${oAvg.toFixed(2)}→${avgLean(eng).toFixed(2)})`);
   hud();
   reactions();
 
@@ -157,7 +178,10 @@ async function main() {
       const a0 = avgLean(eng);
       const r = await eng.resolveObjectionWindow(h, grounds);
       logResult("P-direct", r, t0, a0, avgLean(eng));
-      if (r.stricken) console.log("  >> SUSTAINED — jury will disregard.");
+      if (r.stricken) {
+        console.log(`  >> SUSTAINED — the jury will disregard: "${h.text}"`);
+        pendingPQ = null;
+      }
       hud();
       reactions();
       if (r.mistrial) break;
@@ -235,6 +259,10 @@ async function main() {
       const a0 = avgLean(eng);
       const r = await eng.resolveObjectionWindow(h, grounds);
       logResult("P-cross", r, t0, a0, avgLean(eng));
+      if (r.stricken) {
+        console.log(`  >> SUSTAINED — the jury will disregard: "${h.text}"`);
+        pendingPQ = null;
+      }
       hud();
       reactions();
     }
@@ -243,7 +271,9 @@ async function main() {
   if (!eng.state.outcome) {
     await doRead(eng, caseFile.documents, null, "final read before closing");
     const closing = await ask(`\nCLOSING (≤${CONFIG.MAX_WORDS_CLOSING} words)\n> `);
-    await eng.submitClosing(closing || "...");
+    const cWords = closing.split(/\s+/).filter(Boolean).length;
+    const cRes = await eng.submitClosing(closing || "...");
+    console.log(`  (${cWords}/${CONFIG.MAX_WORDS_CLOSING} words${cRes.truncated ? " — TRUNCATED to the cap" : ""})`);
     hud();
     console.log("\n--- DELIBERATION ---");
     const outcome = await eng.deliberate();
@@ -297,6 +327,10 @@ async function doRead(eng: TrialEngine, docs: { id: string; bin: string; title: 
     const pick = (await ask("Read> ")).trim().toUpperCase();
     const found = docs.find((d) => d.id === pick);
     if (found) {
+      if (TTY && eng.state.docsRead.includes(found.id)) {
+        console.log("  (already read — pick fresh paper; re-reads still cost the phase's slot)");
+        continue;
+      }
       doc = found;
       break;
     }
@@ -311,6 +345,9 @@ async function doRead(eng: TrialEngine, docs: { id: string; bin: string; title: 
   }
   outStream.write("\r                              \r");
   await eng.readDoc(doc.id);
+  // P1-1 (review 04): the paper exists for the player only during the read.
+  // Terminal can't un-print, so clear the scrollback's view of it.
+  if (TTY) console.clear();
   console.log("  (put it back.)");
 }
 

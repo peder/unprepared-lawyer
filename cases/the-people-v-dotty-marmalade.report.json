@@ -1,0 +1,60 @@
+{
+ "title": "The People v. Dotty Marmalade",
+ "truthVariant": "other_crime",
+ "timingsMs": {
+  "core": 82890,
+  "stage2": 218212,
+  "doccheck": 1021,
+  "truthcheck": 146
+ },
+ "retries": {},
+ "droppedClaims": {
+  "D02": [
+   "F04"
+  ],
+  "D07": [
+   "F19",
+   "F17"
+  ],
+  "D10": [
+   "F26"
+  ],
+  "D12": [
+   "F12"
+  ]
+ },
+ "importance3": [
+  {
+   "id": "F09",
+   "inDoc": true,
+   "known": true,
+   "repaired": true
+  },
+  {
+   "id": "F17",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  },
+  {
+   "id": "F23",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  },
+  {
+   "id": "F26",
+   "inDoc": true,
+   "known": true,
+   "repaired": false
+  }
+ ],
+ "tokenEstimate": 12966,
+ "jevModel": "jev-latest",
+ "quality": "ok",
+ "qualityReasons": [],
+ "truthCheck": {
+  "guiltyOfCharge": 0.03,
+  "guiltyOfSomethingElse": 0.98
+ }
+}

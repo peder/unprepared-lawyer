@@ -23,6 +23,12 @@ import { applyPatience, inMistrialZone } from "../rules/patience.js";
 import { castVotes, smoothLeaning } from "../rules/verdict.js";
 import { JUDGE_LINES, deliberationLine } from "../templates.js";
 
+export function truncateWords(text: string, max: number): { text: string; truncated: boolean } {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length <= max) return { text, truncated: false };
+  return { text: words.slice(0, max).join(" "), truncated: true };
+}
+
 export class PhaseError extends Error {
   constructor(public phase: Phase, action: string) {
     super(`Cannot ${action} in phase ${phase}`);
@@ -264,8 +270,12 @@ export class TrialEngine {
 
   // ---- Opening (spec §10.2): A-open + B in parallel ----
   // Returns the claim/impropriety read so the UI can narrate the reaction.
-  async submitOpening(text: string): Promise<{ claimStatus: ClaimStatus; impropriety: ImproprietyLevel }> {
+  // Review 04 P1-4: over-long statements are truncated in the engine — the
+  // 151st word never reaches the transcript or Jev.
+  async submitOpening(text: string): Promise<{ claimStatus: ClaimStatus; impropriety: ImproprietyLevel; truncated: boolean }> {
     this.requirePhase("give an opening statement", "OPENING");
+    const cut = truncateWords(text, CONFIG.MAX_WORDS_OPENING);
+    text = cut.text;
     this.addTranscript({ round: 1, speaker: "defense", kind: "opening", text });
     const factKeys = Object.fromEntries(this.caseFile.facts.map((f) => [f.id, f.statement]));
     const recordView = buildRecordView(this.state, { currentQuestion: text, currentQuestionAskedBy: "defense" });
@@ -283,7 +293,7 @@ export class TrialEngine {
     this.state.questionsAskedThisWitness = 0;
     this.setPhase("P_READ");
     const { choice } = choiceOf(aResp, "claim_status");
-    return { claimStatus: choice as ClaimStatus, impropriety: IMPROPRIETY_LEVELS[scoreOf(aResp, "impropriety")] as ImproprietyLevel };
+    return { claimStatus: choice as ClaimStatus, impropriety: IMPROPRIETY_LEVELS[scoreOf(aResp, "impropriety")] as ImproprietyLevel, truncated: cut.truncated };
   }
 
   private applyClaimPatience(aResp: JevResponse) {
@@ -310,9 +320,10 @@ export class TrialEngine {
   async readDoc(docId: DocId): Promise<void> {
     this.requirePhase("read a document", "P_READ", "D_READ", "FINAL_READ");
     if (this.state.readsLeft <= 0) throw new PhaseError(this.state.phase, `read ${docId} (no reads left)`);
+    // Review 04 P2: re-reads count — silently skipping fresh paper is a wasted discovery.
+    this.state.readsLeft -= 1;
     if (!this.state.docsRead.includes(docId)) {
       this.state.docsRead.push(docId);
-      this.state.readsLeft -= 1;
     }
     if (this.state.phase === "P_READ") {
       this.state.questionsAskedThisWitness = 0;
@@ -622,8 +633,10 @@ export class TrialEngine {
   }
 
   // ---- Closing + deliberation (spec §10.2, §10.4, §10.5) ----
-  async submitClosing(text: string): Promise<void> {
+  async submitClosing(text: string): Promise<{ truncated: boolean }> {
     this.requirePhase("give a closing argument", "CLOSING");
+    const cut = truncateWords(text, CONFIG.MAX_WORDS_CLOSING); // Review 04 P1-4
+    text = cut.text;
     // The prosecution closing was generated during the final read (readDoc).
     // If the trial was constructed without it (tests), add the stub line.
     if (!this.state.transcript.some((t) => t.speaker === "prosecutor" && t.kind === "closing")) {
@@ -647,6 +660,7 @@ export class TrialEngine {
     this.applyClaimPatience(aResp);
     await this.applyJuryResponse(bResp);
     this.setPhase("DELIBERATION");
+    return { truncated: cut.truncated };
   }
 
   async deliberate(): Promise<NonNullable<TrialState["outcome"]>> {
