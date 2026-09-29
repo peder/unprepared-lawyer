@@ -61,7 +61,7 @@ const WireChoice = z.object({
 }).passthrough();
 const WireScore = z.object({
   type: z.literal("score"),
-  score: z.number().int(),
+  score: z.number(), // live Jev sometimes sends floats — rounded + clamped below
   confidence: z.number(),
   probabilities: z.record(z.string(), z.number()),
   legend: z.record(z.string(), z.string()),
@@ -133,7 +133,8 @@ export function parseJevResponse(raw: unknown, questions: Record<string, JevQues
         const w = WireScore.parse(wire);
         const legend = legendToArray(w.legend);
         if (legend.length !== q.criteria.length) throw new Error(`legend length ${legend.length} != criteria ${q.criteria.length}`);
-        answers[key] = { type: "score", score: w.score, confidence: w.confidence, probabilities: w.probabilities, legend, model };
+        const score = Math.min(legend.length - 1, Math.max(0, Math.round(w.score)));
+        answers[key] = { type: "score", score, confidence: w.confidence, probabilities: w.probabilities, legend, model };
       }
     } catch (e) {
       // eslint-disable-next-line no-console

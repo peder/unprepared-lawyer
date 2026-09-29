@@ -4,3 +4,5 @@ desktop/node_modules/
 desktop/release/
 *.log
 .opencode/
+.env
+.env.local

@@ -66,4 +66,15 @@ describe("parseJevResponse — real wire format (P0-1)", () => {
     const res = parseJevResponse({ nope: true }, QUESTIONS);
     expect(Object.keys(res.answers)).toEqual(Object.keys(QUESTIONS));
   });
+
+  it("live Jev float scores are rounded, not discarded", () => {
+    // Observed live (jev-1.13.0): score sent as float despite int spec.
+    const res = parseJevResponse(
+      { model: "jev-live", answers: { ...wire.answers, impropriety: { ...wire.answers.impropriety, score: 1.6 } } },
+      QUESTIONS,
+    );
+    const imp = res.answers["impropriety"];
+    expect(imp.type).toBe("score");
+    if (imp.type === "score") expect(imp.score).toBe(2);
+  });
 });
