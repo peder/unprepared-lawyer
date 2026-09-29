@@ -97,6 +97,27 @@ describe("question pipeline sampling order + gating (spec §8.2)", () => {
     expect(eng.status().phase).toBe("DONE");
   });
 
+  it("P0-3 (review 02): waiving ends the examination with ZERO model calls", async () => {
+    const { eng, jev } = engineWith({ noul: { prosecutor_objects: 0 } });
+    await driveToPCross(eng);
+    const jevCalls = jev.log.length;
+    let llmCalls = 0;
+    const llm = (eng as unknown as { llm: { voiceWitness: (...a: never[]) => Promise<never> } }).llm;
+    const orig = llm.voiceWitness.bind(llm);
+    llm.voiceWitness = (async (...a: never[]) => {
+      llmCalls += 1;
+      return orig(...a);
+    }) as typeof llm.voiceWitness;
+    const answersBefore = eng.state.transcript.filter((t) => t.kind === "answer").length;
+    eng.waiveQuestion("W1");
+    expect(jev.log.length).toBe(jevCalls); // no Jev calls
+    expect(llmCalls).toBe(0); // no LLM calls
+    expect(eng.state.transcript.filter((t) => t.kind === "answer").length).toBe(answersBefore); // no answer voiced
+    expect(eng.state.transcript.some((t) => t.text === "No further questions.")).toBe(true);
+    expect(eng.status().phase).toBe("P_READ"); // advanced to W2's read
+    expect(() => eng.waiveQuestion("W1")).toThrow(PhaseError); // wrong witness now
+  });
+
   it("P1-5: penalty questions get NO clean-exchange bonus", async () => {
     const { eng } = engineWith({
       noul: { prosecutor_objects: 0, witness_truthful: 1 },

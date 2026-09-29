@@ -59,3 +59,26 @@ I haven't re-verified these line by line yet; I'll do that once the play loop is
 2. The startup banner shows LIVE Jev when a key is present, and `PLAY_DEBUG=1` prints per-exchange Jev decisions and latency.
 3. A scripted non-TTY run (`npm run play < fixtures/play-script.txt`) reaches `FINAL:` in CI.
 4. Waiving a question makes zero model calls.
+
+---
+
+## Response to Review 02 — 2026-09-29
+
+Implementer: Muse Spark. Baseline at finish: 10 test files, **57/57 pass**, `tsc` clean, scripted `play` reaches VERDICT locally and in CI, one full trial also verified against **live** Jev (`jev-1.13.0`, hung jury, patience 70→44, jury spread with 😏🙄😴😂🤔).
+
+### P0
+- **P0-1** — new `scripts/input.ts`: one persistent `data` listener, one buffer, modes `line`/`objection`. Never `pause()`s; objection window discards everything received while open (fixes both the silent quit *and* the window-keystroke leak into the next prompt). Raw mode toggled TTY-only, always restored before `askLine`. `main()` ends with explicit `process.exit(0)`; stdin `ref()` guarded (redirected stdin has no `ref`). `tests/input.test.ts` covers chunked input, window discard, `o`-resolves, and the non-TTY path. `play.ts` deleted its local reader + raw-mode copy and uses the owner.
+- **P0-2** — new `server/jev/factory.ts` `createJevClient()`, shared by `sim.ts` and `play.ts`: `JEV_CLIENT=http|mock`, defaulting to http when `TYPESAFE_API_KEY` is set, else mock with a loud banner. The side-based juror hook is gone from `play.ts` (kept in `sim.ts` as labeled tuning diagnostics). Startup banner prints e.g. `[Jev: LIVE (jev-latest) | LLM: stub]`. `PLAY_DEBUG=1` prints per exchange `claim/improp/obj/stance/truthful/fact`, latency, and jury delta; engine `QuestionDetails` now carries `claimProbs/stanceProbs/factProbs` to back it.
+- **P0-3** — `eng.waiveQuestion(witnessId)`: ends the examination, writes "No further questions.", advances phases, **zero** Jev/LLM calls (test asserts call counts, no answer entry, phase advance). Empty/`pass` input waives in `play.ts`.
+
+### P1
+- Prosecutor double-print removed (was already fixed pre-review; kept). Examination headers (`=== PROSECUTION DIRECT: MARLA CRUMP (Fair organizer) ===`), numbered `[Direct 2/3]` / `YOU [cross 1/3]` prompts, witness answers indented under the question with real names (`MARLA CRUMP:`), HUD shows phase-relevant stats only (objections on their examination, questions on yours, reads on reads), jury line shows movement (`0.34 → 0.33 (▼1)`, only ≥5pt movers listed), `[o] OBJECT (4s)` single line + single-key grounds menu (`1`–`8`), opening feedback line (`claim=…, tone=…; jury …→…`) — `submitOpening` now returns the A-open read.
+
+### P2 / Review 01 closure
+- Review 01 items P0-1–P2-5 all still pass (51 carried tests green, unchanged semantics; only additions: `submitOpening` return value, `QuestionDetails.probs`, `waiveQuestion`). Live traffic since re-verified the wire parser (float-score tolerance, committed earlier).
+
+### DoD
+1. Non-TTY scripted run reaches VERDICT repeatedly (185-record JSONL log verified: 143 events, 21 inputs, 20 results). Live-TTY `o`-press path is code-complete but still unproven by a human hand — flagged for the next playtest.
+2. Banner verified in both modes; `PLAY_DEBUG=1` line format confirmed in code, not yet eyeballed live.
+3. `fixtures/play-script.txt` (includes a `pass` waive + an invalid witness pick, both self-correcting) + CI step asserting `VERDICT:` and JSONL validity on ubuntu + windows.
+4. Unit-tested: `jev.log` length unchanged, LLM spy at zero, no answer entry.

@@ -60,6 +60,10 @@ export interface QuestionDetails {
   truthful?: boolean;
   factId?: string;
   demeanor?: string;
+  // PLAY_DEBUG / tuning: the distributions Jev returned (not just samples).
+  claimProbs?: Record<string, number>;
+  stanceProbs?: Record<string, number>;
+  factProbs?: Record<string, number>;
 }
 
 export interface QuestionResult {
@@ -79,6 +83,7 @@ export interface ProsecutorHandle {
   callA: JevResponse;
   claimStatus: ClaimStatus;
   impropriety: ImproprietyLevel;
+  claimProbs: Record<string, number>;
   penalized: boolean;
 }
 
@@ -258,7 +263,8 @@ export class TrialEngine {
   }
 
   // ---- Opening (spec §10.2): A-open + B in parallel ----
-  async submitOpening(text: string): Promise<void> {
+  // Returns the claim/impropriety read so the UI can narrate the reaction.
+  async submitOpening(text: string): Promise<{ claimStatus: ClaimStatus; impropriety: ImproprietyLevel }> {
     this.requirePhase("give an opening statement", "OPENING");
     this.addTranscript({ round: 1, speaker: "defense", kind: "opening", text });
     const factKeys = Object.fromEntries(this.caseFile.facts.map((f) => [f.id, f.statement]));
@@ -276,6 +282,8 @@ export class TrialEngine {
     await this.applyJuryResponse(bResp);
     this.state.questionsAskedThisWitness = 0;
     this.setPhase("P_READ");
+    const { choice } = choiceOf(aResp, "claim_status");
+    return { claimStatus: choice as ClaimStatus, impropriety: IMPROPRIETY_LEVELS[scoreOf(aResp, "impropriety")] as ImproprietyLevel };
   }
 
   private applyClaimPatience(aResp: JevResponse) {
@@ -362,6 +370,7 @@ export class TrialEngine {
     const impropriety = IMPROPRIETY_LEVELS[scoreOf(callA, "impropriety")] as ImproprietyLevel;
     details.claimStatus = claimStatus;
     details.impropriety = impropriety;
+    details.claimProbs = choiceOf(callA, "claim_status").probabilities;
     const penalized = this.applyQuestionPenalties(claimStatus, impropriety);
 
     const objects = sampleNoul(noulP(callA, "prosecutor_objects"), this.rng);
@@ -400,8 +409,20 @@ export class TrialEngine {
     return { stricken: false, answer, details };
   }
 
-  private advanceAfterDefenseQuestion() {
-    if (this.state.questionsAskedThisWitness < DEFENSE_QS) return;
+  /** P0-3 (review 02): "No further questions" ends the examination. Consumes the
+   *  remaining slots, writes a transcript note, and makes ZERO Jev/LLM calls —
+   *  unlike asking it as a question, which would voice an answer and move the jury. */
+  waiveQuestion(witnessId: WitnessId): void {
+    this.requirePhase("waive questions", "P_CROSS", "D_DIRECT");
+    if (witnessId !== this.state.currentWitnessId) throw new PhaseError(this.state.phase, `waive ${witnessId} (current witness is ${this.state.currentWitnessId})`);
+    if (this.state.questionsAskedThisWitness >= DEFENSE_QS) throw new PhaseError(this.state.phase, "waive with no slots left");
+    this.state.questionsAskedThisWitness = DEFENSE_QS;
+    const entry = this.addTranscript({ round: this.roundForPhase(), speaker: "defense", kind: "note", text: "No further questions." });
+    this.addTestimony(witnessId, entry);
+    this.advanceAfterDefenseQuestion();
+  }
+
+  private advanceAfterDefenseQuestion() {    if (this.state.questionsAskedThisWitness < DEFENSE_QS) return;
     if (this.state.phase === "P_CROSS") {
       const next = this.state.prosecutionWitnessIdx + 1;
       const pWits = this.prosecutionWitnesses();
@@ -456,14 +477,14 @@ export class TrialEngine {
     const claimStatus = choiceOf(callA, "claim_status").choice as ClaimStatus;
     const impropriety = IMPROPRIETY_LEVELS[scoreOf(callA, "impropriety")] as ImproprietyLevel;
     const penalized = this.applyQuestionPenalties(claimStatus, impropriety);
-    return { witnessId, text, examinationType, qEntrySeq: qEntry.seq, callA, claimStatus, impropriety, penalized };
+    return { witnessId, text, examinationType, qEntrySeq: qEntry.seq, callA, claimStatus, impropriety, claimProbs: choiceOf(callA, "claim_status").probabilities, penalized };
   }
 
   async resolveObjectionWindow(handle: ProsecutorHandle, grounds: ObjectionGrounds | null): Promise<QuestionResult> {
     this.requirePhase("resolve the objection window", "P_DIRECT", "D_CROSS");
     if (handle.witnessId !== this.state.currentWitnessId) throw new PhaseError(this.state.phase, "stale objection handle");
     const round = this.roundForPhase();
-    const details: QuestionDetails = { claimStatus: handle.claimStatus, impropriety: handle.impropriety };
+    const details: QuestionDetails = { claimStatus: handle.claimStatus, impropriety: handle.impropriety, claimProbs: handle.claimProbs };
 
     if (grounds !== null) {
       if (this.state.playerObjectionsLeft <= 0) throw new PhaseError(this.state.phase, "object (no objections left)");
@@ -543,6 +564,8 @@ export class TrialEngine {
     details.truthful = truthful;
     details.factId = factId;
     details.demeanor = demeanor;
+    details.stanceProbs = stanceProbs;
+    details.factProbs = factProbs;
 
     const priorFacts = this.state.factsStatedByWitness[witnessId] ?? [];
     const voice = await this.llm.voiceWitness({

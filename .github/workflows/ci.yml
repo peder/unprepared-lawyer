@@ -10,6 +10,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -18,3 +21,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: scripted trial reaches a verdict (Review 02 DoD)
+        run: |
+          PLAY_FAST=1 npm run play -- --log=play.jsonl < fixtures/play-script.txt > play-out.txt
+          grep -q "VERDICT:" play-out.txt
+          node -e "const fs=require('fs'); for (const l of fs.readFileSync('play.jsonl','utf8').trim().split('\n')) JSON.parse(l); console.log('jsonl ok')"

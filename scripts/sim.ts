@@ -4,7 +4,8 @@
 // jury visibly moves: prosecution evidence pushes guilty, defense pushes back.
 import "./env.js";
 import { TrialEngine } from "../server/trial/TrialEngine.js";
-import { MockJevClient, HttpJevClient, type JevClient, type JevRequest } from "../server/jev/JevClient.js";
+import { createJevClient } from "../server/jev/factory.js";
+import type { JevRequest } from "../server/jev/JevClient.js";
 import { createLLMClient } from "../server/llm/OpencodeLLMClient.js";
 import { generateCase } from "../server/gen/generateCase.js";
 
@@ -32,11 +33,10 @@ function leanStr(leanings: Record<string, number>): string {
 async function main() {
   const caseFile = await generateCase();
   const side: { current: "prosecution" | "defense" } = { current: "prosecution" };
-  // JEV_CLIENT=http uses the real TypeSafe API (needs TYPESAFE_API_KEY); default is the mock.
-  const live = (process.env.JEV_CLIENT ?? "mock").toLowerCase() === "http";
-  const jev: JevClient = live
-    ? new HttpJevClient()
-    : new MockJevClient({}, "jev-mock-0.1", dynamicNoul(side));
+  // Shared factory (Review 02 P0-2): JEV_CLIENT=http for live, else mock.
+  // The mock keeps a dynamic hook so the tuning sim shows jury movement.
+  const { client: jev, banner } = createJevClient({ dynamicNoul: dynamicNoul(side) });
+  console.log(`[sim] ${banner}`);
   const llm = createLLMClient(); // stub by default; LLM_PROVIDER=opencode for live voice
   const eng = new TrialEngine(caseFile, jev, llm, {
     seed: 1234,

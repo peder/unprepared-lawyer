@@ -1,0 +1,20 @@
+Geese cannot carry pumpkins.
+D01
+Were you looking?
+What did you see?
+Was it the forklift?
+D02
+Seen anything?
+pass
+Sure about that?
+W3
+D03
+Tell us everything.
+And then?
+Cross my heart?
+W4
+D04
+Say it loudly.
+Once more?
+For the record?
+The pond seeds acquit.
