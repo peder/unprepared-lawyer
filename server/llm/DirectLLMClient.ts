@@ -32,8 +32,17 @@ export class HttpStatusError extends Error {
   }
 }
 
-/** Retryable across cascade models: rate limits, upstream 5xx, network failures. */
+/** Transient upstream flakiness (overloaded free tier): safe to try the next cascade model. */
+export class TransientLLMError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TransientLLMError";
+  }
+}
+
+/** Retryable across cascade models: rate limits, upstream 5xx, network failures, empty 200s. */
 export function isRetryable(e: unknown): boolean {
+  if (e instanceof TransientLLMError) return true;
   if (e instanceof HttpStatusError) return e.status === 429 || e.status >= 500;
   if (e instanceof TypeError) return true; // fetch network failure
   return /timeout|econnreset|socket/i.test((e as Error)?.message ?? "");
@@ -143,7 +152,7 @@ export class DirectLLMClient implements LLMClient {
       const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
       const ttfbMs = Date.now() - t0;
       const content = json.choices?.[0]?.message?.content;
-      if (typeof content !== "string" || !content) throw new Error("direct llm: empty content");
+      if (typeof content !== "string" || !content) throw new TransientLLMError(`direct llm: empty content from ${model}`);
       return { text: content, ttfbMs, ms: Date.now() - t0, model };
     } finally {
       clearTimeout(timer);

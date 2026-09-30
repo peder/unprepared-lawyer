@@ -70,4 +70,18 @@ describe("DirectLLMClient cascade", () => {
     expect(isRetryable(new TypeError("fetch failed"))).toBe(true);
     expect(isRetryable(new Error("bad voice JSON shape"))).toBe(false);
   });
+
+  it("empty content cascades instead of stopping", async () => {
+    const calls: string[] = [];
+    const f = (async (url: string, init: { body: string }) => {
+      const model = (JSON.parse(init.body) as { model: string }).model;
+      calls.push(model);
+      if (model === "m1") return { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: "" } }] }) };
+      return { ok: true, status: 200, json: async () => voiceBody };
+    }) as unknown as typeof fetch;
+    const c = new DirectLLMClient("key", "m1,m2", f, 6000);
+    const r = await c.voiceWitness(voiceArgs);
+    expect(calls).toEqual(["m1", "m2"]);
+    expect(r.answer).toBe("I heard it.");
+  });
 });
