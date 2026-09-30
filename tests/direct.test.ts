@@ -28,11 +28,25 @@ describe("DirectLLMClient cascade", () => {
       if (model === "m1") return { ok: false, status: 429, json: async () => ({}) };
       return { ok: true, status: 200, json: async () => voiceBody };
     }) as unknown as typeof fetch;
-    const c = new DirectLLMClient("key", "m1,m2", f, 6000);
+    const c = new DirectLLMClient("key", "m1,m2", f, 2000); // small budget: no same-model retry
     const r = await c.voiceWitness(voiceArgs);
     expect(calls).toEqual(["m1", "m2"]);
     expect(r.answer).toBe("I heard it.");
     expect(r.timings?.model).toBe("m2");
+  });
+
+  it("429 retries the same model once after backoff before cascading", async () => {
+    const calls: string[] = [];
+    const f = (async (url: string, init: { body: string }) => {
+      const model = (JSON.parse(init.body) as { model: string }).model;
+      calls.push(model);
+      if (calls.length === 1) return { ok: false, status: 429, json: async () => ({}) };
+      return { ok: true, status: 200, json: async () => voiceBody };
+    }) as unknown as typeof fetch;
+    const c = new DirectLLMClient("key", "m1,m2", f, 20000);
+    const r = await c.voiceWitness(voiceArgs);
+    expect(calls).toEqual(["m1", "m1"]); // recovered on retry, m2 untouched
+    expect(r.answer).toBe("I heard it.");
   });
 
   it("non-retryable 400 stops the cascade immediately", async () => {

@@ -48,6 +48,23 @@ export function isRetryable(e: unknown): boolean {
   return /timeout|econnreset|socket/i.test((e as Error)?.message ?? "");
 }
 
+function shortModel(model: string): string {
+  const bare = model.includes("/") ? model.split("/").slice(-1)[0] : model;
+  return bare.replace(/:free$/, "");
+}
+
+function shortReason(e: unknown): string {
+  if (e instanceof HttpStatusError) return `HTTP ${e.status}`;
+  const m = /empty content|timeout|econnreset|socket|fetch failed/i.exec((e as Error)?.message ?? "");
+  return m ? m[0].toLowerCase() : "error";
+}
+
+export function formatAttempts(e: unknown): string {
+  const attempts = (e as { attempts?: CascadeAttempt[] })?.attempts ?? [];
+  if (attempts.length === 0) return (e as Error)?.message?.slice(0, 160) ?? String(e);
+  return attempts.map((a) => `${a.model} ${a.error}`).join("; ");
+}
+
 interface CompleteOpts {
   system: string;
   user: string;
@@ -63,6 +80,17 @@ interface CompleteResult {
   ms: number;
   model: string;
 }
+
+export interface CascadeAttempt {
+  model: string;
+  error: string;
+  ms: number;
+}
+
+// 429 backoff: pools recover in seconds, so one same-model retry is worth it
+// when the budget allows. Never exceeds the caller's total budget.
+const RETRY_429_MIN_REMAINING_MS = 2500;
+const RETRY_429_WAIT_MS = 1500;
 
 export class DirectLLMClient implements LLMClient {
   private stub = new StubLLMClient();
@@ -81,26 +109,45 @@ export class DirectLLMClient implements LLMClient {
   }
 
   /** Raw completion shared by voice/cross/closing; also backs authorCase().
-   *  Cascades across voiceModels on retryable failures (429/5xx/network) within budget. */
+   *  Cascades across voiceModels on retryable failures (429/5xx/network/empty),
+   *  with one same-model retry after a short backoff on 429 — all inside the
+   *  caller's total budget. */
   async complete(opts: CompleteOpts & { model?: string }): Promise<CompleteResult> {
     const models = opts.model ? [opts.model] : this.voiceModels;
     const t0 = Date.now();
-    let lastErr: unknown = null;
+    const attempts: CascadeAttempt[] = [];
+    const fail = (e: unknown): Error => {
+      const err = e instanceof Error ? e : new Error(String(e));
+      (err as unknown as { attempts?: CascadeAttempt[] }).attempts = attempts;
+      return err;
+    };
     for (const model of models) {
-      const remaining = (opts.timeoutMs ?? this.voiceBudgetMs) - (Date.now() - t0);
-      if (remaining <= 0) break;
-      if (opts.signal?.aborted) throw opts.signal.reason ?? new Error("aborted");
-      try {
-        const r = await this.attempt({ ...opts, model, timeoutMs: remaining });
-        return { ...r, ms: Date.now() - t0 };
-      } catch (e) {
-        if (/aborted|abort/i.test((e as Error)?.message ?? "") || (e as Error)?.name === "AbortError") throw e;
-        lastErr = e;
-        if (!isRetryable(e)) throw e;
-        // else: fall through to the next model in the cascade
+      for (let tried = 0; ; tried++) {
+        const remaining = (opts.timeoutMs ?? this.voiceBudgetMs) - (Date.now() - t0);
+        if (remaining <= 0) throw fail(new Error("direct llm: budget exhausted"));
+        if (opts.signal?.aborted) throw opts.signal.reason ?? new Error("aborted");
+        const a0 = Date.now();
+        try {
+          const r = await this.attempt({ ...opts, model, timeoutMs: remaining });
+          return { ...r, ms: Date.now() - t0 };
+        } catch (e) {
+          if (/aborted|abort/i.test((e as Error)?.message ?? "") || (e as Error)?.name === "AbortError") throw e;
+          attempts.push({ model: shortModel(model), error: shortReason(e), ms: Date.now() - a0 });
+          if (process.env.PLAY_DEBUG === "1") {
+            // eslint-disable-next-line no-console
+            console.log(`  [llm] ${shortModel(model)} failed (${shortReason(e)})`);
+          }
+          const left = (opts.timeoutMs ?? this.voiceBudgetMs) - (Date.now() - t0);
+          if (e instanceof HttpStatusError && e.status === 429 && tried === 0 && left > RETRY_429_MIN_REMAINING_MS) {
+            await new Promise((r) => setTimeout(r, Math.min(RETRY_429_WAIT_MS, left - 500)));
+            continue; // same model once more — pools recover in seconds
+          }
+          if (!isRetryable(e)) throw fail(e);
+          break; // next model in the cascade
+        }
       }
     }
-    throw lastErr ?? new Error("direct llm: no models left in cascade");
+    throw fail(new Error("direct llm: no models left in cascade"));
   }
 
   private async attempt(opts: CompleteOpts & { model: string }): Promise<CompleteResult> {
@@ -224,7 +271,7 @@ export class DirectLLMClient implements LLMClient {
     } catch (e) {
       if (/aborted|abort/i.test((e as Error)?.message ?? "") || (e as Error)?.name === "AbortError") throw e;
       // eslint-disable-next-line no-console
-      console.warn(`[llm] voice fallback to stub template (${(e as Error)?.message?.slice(0, 160) ?? e})`);
+      console.warn(`[llm] voice fallback to stub template (${formatAttempts(e)})`);
       return this.stub.voiceWitness(args);
     }
   }
