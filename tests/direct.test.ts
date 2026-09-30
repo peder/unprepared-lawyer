@@ -3,7 +3,8 @@ import { DirectLLMClient, isRetryable, HttpStatusError } from "../server/llm/Dir
 import { FIXTURE_CASE } from "../fixtures/case.fixture.js";
 
 function jsonFetch(body: unknown, status = 200) {
-  return (async () => ({ ok: status >= 200 && status < 300, status, json: async () => body })) as unknown as typeof fetch;
+  const text = JSON.stringify(body);
+  return (async () => ({ ok: status >= 200 && status < 300, status, text: async () => text, json: async () => body })) as unknown as typeof fetch;
 }
 
 const witness = FIXTURE_CASE.witnesses[2];
@@ -25,8 +26,8 @@ describe("DirectLLMClient cascade", () => {
     const f = (async (url: string, init: { body: string }) => {
       const model = (JSON.parse(init.body) as { model: string }).model;
       calls.push(model);
-      if (model === "m1") return { ok: false, status: 429, json: async () => ({}) };
-      return { ok: true, status: 200, json: async () => voiceBody };
+      if (model === "m1") return { ok: false, status: 429, text: async () => "", json: async () => ({}) };
+      return { ok: true, status: 200, text: async () => JSON.stringify(voiceBody), json: async () => voiceBody };
     }) as unknown as typeof fetch;
     const c = new DirectLLMClient("key", "m1,m2", f, 2000); // small budget: no same-model retry
     const r = await c.voiceWitness(voiceArgs);
@@ -40,8 +41,8 @@ describe("DirectLLMClient cascade", () => {
     const f = (async (url: string, init: { body: string }) => {
       const model = (JSON.parse(init.body) as { model: string }).model;
       calls.push(model);
-      if (calls.length === 1) return { ok: false, status: 429, json: async () => ({}) };
-      return { ok: true, status: 200, json: async () => voiceBody };
+      if (calls.length === 1) return { ok: false, status: 429, text: async () => "", json: async () => ({}) };
+      return { ok: true, status: 200, text: async () => JSON.stringify(voiceBody), json: async () => voiceBody };
     }) as unknown as typeof fetch;
     const c = new DirectLLMClient("key", "m1,m2", f, 20000);
     const r = await c.voiceWitness(voiceArgs);
@@ -53,7 +54,7 @@ describe("DirectLLMClient cascade", () => {
     const calls: string[] = [];
     const f = (async (url: string, init: { body: string }) => {
       calls.push((JSON.parse(init.body) as { model: string }).model);
-      return { ok: false, status: 400, json: async () => ({}) };
+      return { ok: false, status: 400, text: async () => "bad request", json: async () => ({}) };
     }) as unknown as typeof fetch;
     const c = new DirectLLMClient("key", "m1,m2", f, 6000);
     const r = await c.voiceWitness(voiceArgs); // falls back to stub, no throw
@@ -90,12 +91,21 @@ describe("DirectLLMClient cascade", () => {
     const f = (async (url: string, init: { body: string }) => {
       const model = (JSON.parse(init.body) as { model: string }).model;
       calls.push(model);
-      if (model === "m1") return { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: "" } }] }) };
-      return { ok: true, status: 200, json: async () => voiceBody };
+      if (model === "m1") return { ok: true, status: 200, text: async () => JSON.stringify({ choices: [{ message: { content: "" } }] }), json: async () => ({ choices: [{ message: { content: "" } }] }) };
+      const body = JSON.stringify(voiceBody);
+      return { ok: true, status: 200, text: async () => body, json: async () => voiceBody };
     }) as unknown as typeof fetch;
     const c = new DirectLLMClient("key", "m1,m2", f, 6000);
     const r = await c.voiceWitness(voiceArgs);
     expect(calls).toEqual(["m1", "m2"]);
     expect(r.answer).toBe("I heard it.");
+  });
+
+  it("non-JSON 200 carries the raw body and cascades", async () => {
+    const f = (async () => ({ ok: true, status: 200, text: async () => "Service busy, try later" })) as unknown as typeof fetch;
+    const c = new DirectLLMClient("key", "m1", f, 6000);
+    const r = await c.voiceWitness(voiceArgs); // stub fallback, no throw
+    expect(r.timings).toBeUndefined();
+    expect(r.answer.length).toBeGreaterThan(0);
   });
 });

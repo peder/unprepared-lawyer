@@ -55,8 +55,9 @@ function shortModel(model: string): string {
 
 function shortReason(e: unknown): string {
   if (e instanceof HttpStatusError) return `HTTP ${e.status}`;
-  const m = /empty content|timeout|econnreset|socket|fetch failed/i.exec((e as Error)?.message ?? "");
-  return m ? m[0].toLowerCase() : "error";
+  const m = /empty content|non-JSON 200|timeout|econnreset|socket|fetch failed/i.exec((e as Error)?.message ?? "");
+  if (m) return m[0].toLowerCase();
+  return ((e as Error)?.message ?? String(e)).slice(0, 100);
 }
 
 export function formatAttempts(e: unknown): string {
@@ -135,7 +136,7 @@ export class DirectLLMClient implements LLMClient {
           attempts.push({ model: shortModel(model), error: shortReason(e), ms: Date.now() - a0 });
           if (process.env.PLAY_DEBUG === "1") {
             // eslint-disable-next-line no-console
-            console.log(`  [llm] ${shortModel(model)} failed (${shortReason(e)})`);
+            console.log(`  [llm] ${shortModel(model)} failed (${shortReason(e)}): ${((e as Error)?.message ?? "").slice(0, 400)}`);
           }
           const left = (opts.timeoutMs ?? this.voiceBudgetMs) - (Date.now() - t0);
           if (e instanceof HttpStatusError && e.status === 429 && tried === 0 && left > RETRY_429_MIN_REMAINING_MS) {
@@ -195,11 +196,23 @@ export class DirectLLMClient implements LLMClient {
         }),
         gate,
       ])) as Response;
-      if (!res.ok) throw new HttpStatusError(res.status, `direct llm HTTP ${res.status}`);
-      const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+      if (!res.ok) {
+        let preview = "";
+        try {
+          preview = (await res.text()).slice(0, 300);
+        } catch { /* ignore */ }
+        throw new HttpStatusError(res.status, `direct llm HTTP ${res.status} from ${model} (body: ${preview})`);
+      }
+      const rawText = await res.text();
+      let json: { choices?: { message?: { content?: string } }[] };
+      try {
+        json = JSON.parse(rawText) as typeof json;
+      } catch {
+        throw new TransientLLMError(`direct llm: non-JSON 200 from ${model} (body: ${rawText.slice(0, 300)})`);
+      }
       const ttfbMs = Date.now() - t0;
       const content = json.choices?.[0]?.message?.content;
-      if (typeof content !== "string" || !content) throw new TransientLLMError(`direct llm: empty content from ${model}`);
+      if (typeof content !== "string" || !content) throw new TransientLLMError(`direct llm: empty content from ${model} (body: ${rawText.slice(0, 300)})`);
       return { text: content, ttfbMs, ms: Date.now() - t0, model };
     } finally {
       clearTimeout(timer);
