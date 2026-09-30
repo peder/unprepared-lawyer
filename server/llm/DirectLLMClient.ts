@@ -17,7 +17,8 @@ import type { Witness } from "@shared/types.js";
 
 export const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL ?? "https://openrouter.ai/api/v1";
 export const DEFAULT_VOICE_MODEL =
-  process.env.LLM_VOICE_MODEL ?? "poolside/laguna-xs-2.1:free,google/gemma-4-26b-a4b-it:free,liquid/lfm-2.5-2.6b:free";
+  process.env.LLM_VOICE_MODEL ??
+  "stealth/space-bunny-alpha,poolside/laguna-xs-2.1:free,google/gemma-4-26b-a4b-it:free,liquid/lfm-2.5-2.6b:free";
 export const DEFAULT_AUTHOR_MODEL = process.env.LLM_AUTHOR_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
 
 export const VOICE_BUDGET_MS = Number(process.env.VOICE_BUDGET_MS ?? 6000);
