@@ -197,6 +197,36 @@ describe("prosecutor objection window (P1-2, spec §8.4)", () => {
     expect(res.stricken).toBe(false);
     expect(eng.status().questionsLeftForThisWitness).toBe(2);
   });
+
+  it("Review 05 §4: sustained objection aborts the in-flight voice call; result unused", async () => {
+    const jev = new MockJevClient({ noul: { grounds_apply: 1, judge_sustains: 1 } });
+    let seenSignal: AbortSignal | null = null;
+    let voiceCalls = 0;
+    const llm = {
+      voiceWitness: async (args: { signal?: AbortSignal }) => {
+        voiceCalls += 1;
+        seenSignal = args.signal ?? null;
+        await new Promise<void>((_, reject) => {
+          args.signal?.addEventListener("abort", () => reject(new Error("aborted")), { once: true });
+        });
+        throw new Error("unreachable");
+      },
+      prosecutorCross: async () => ["q1?", "q2?"],
+      prosecutionClosing: async () => "closing.",
+    };
+    const eng = new TrialEngine(JSON.parse(JSON.stringify(FIXTURE_CASE)), jev, llm as never, { seed: 11 });
+    await eng.setupPriors();
+    await eng.submitOpening("Hi jury.");
+    await eng.readDoc("D01");
+    const answersBefore = eng.state.transcript.filter((t) => t.kind === "answer").length;
+    const h = await eng.beginProsecutorQuestion({ witnessId: "W1" }); // voice starts, hangs
+    expect(voiceCalls).toBe(1);
+    const res = await eng.resolveObjectionWindow(h, "relevance");
+    expect(res.stricken).toBe(true);
+    expect(Boolean(seenSignal)).toBe(true);
+    expect((seenSignal as unknown as AbortSignal).aborted).toBe(true); // abort signal fired
+    expect(eng.state.transcript.filter((t) => t.kind === "answer").length).toBe(answersBefore); // unused
+  });
 });
 
 describe("phase machine (P1-1, spec §3 limits)", () => {

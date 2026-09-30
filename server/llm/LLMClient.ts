@@ -9,10 +9,17 @@ export interface WitnessRuling {
   demeanor: string;
 }
 
+export interface VoiceTimings {
+  ms: number;
+  ttfbMs?: number;
+  model?: string;
+}
+
 export interface WitnessVoiceResult {
   answer: string;
   stage_direction?: string;
   facts_stated: string[];
+  timings?: VoiceTimings;
 }
 
 export interface LLMClient {
@@ -26,9 +33,11 @@ export interface LLMClient {
     askerRole: string;
     examinationType: string;
     ruling: WitnessRuling;
+    /** Review 05: abort in-flight voice when a prosecutor question is sustained. */
+    signal?: AbortSignal;
   }): Promise<WitnessVoiceResult>;
-  prosecutorCross(args: { prosecutorName: string; persona: string; witness: Witness; transcript: string; n: number }): Promise<string[]>;
-  prosecutionClosing(args: { prosecutorName: string; persona: string; transcript: string }): Promise<string>;
+  prosecutorCross(args: { prosecutorName: string; persona: string; witness: Witness; transcript: string; n: number; signal?: AbortSignal }): Promise<string[]>;
+  prosecutionClosing(args: { prosecutorName: string; persona: string; transcript: string; signal?: AbortSignal }): Promise<string>;
 }
 
 /** Deterministic stub: renders rulings as templated lines (spec §15 fallback style). */

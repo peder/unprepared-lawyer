@@ -12,7 +12,7 @@ import { REACTION_EMOJI } from "@shared/types.js";
 import type { JevClient, JevResponse } from "../jev/JevClient.js";
 import { CONFIG as _C } from "@shared/config.js";
 import type { LLMClient } from "../llm/LLMClient.js";
-import { validateWitnessVoice } from "../llm/LLMClient.js";
+import { validateWitnessVoice, type WitnessVoiceResult, type VoiceTimings } from "../llm/LLMClient.js";
 import {
   buildCallA, buildCallB, buildCallP, buildCallO, buildCallAOpen, buildCallD,
   IMPROPRIETY_LEVELS,
@@ -78,6 +78,7 @@ export interface QuestionResult {
   answer?: string;
   mistrial?: boolean;
   details: QuestionDetails;
+  voiceTimings?: VoiceTimings;
 }
 
 /** P1-2: handle for a prosecutor question awaiting the objection window. */
@@ -91,6 +92,9 @@ export interface ProsecutorHandle {
   impropriety: ImproprietyLevel;
   claimProbs: Record<string, number>;
   penalized: boolean;
+  ruling: { stance: string; truthful: boolean; factId: string; factStatement: string; demeanor: string; stanceProbs: Record<string, number>; factProbs: Record<string, number> };
+  voice: Promise<WitnessVoiceResult>;
+  abortVoice: () => void;
 }
 
 function noulP(resp: JevResponse, key: string): number {
@@ -118,6 +122,8 @@ export class TrialEngine {
   state: TrialState;
   private rng: Rng;
   private seq = 0;
+  /** Review 05: prosecution closing generates DURING the final read (spec §13), not after. */
+  private pendingClosing: Promise<string | null> | null = null;
 
   constructor(
     private caseFile: CaseFile,
@@ -332,14 +338,18 @@ export class TrialEngine {
       this.state.questionsAskedThisWitness = 0;
       this.setPhase("D_DIRECT");
     } else {
-      // FINAL_READ → prosecution closing is generated during the read (spec §10.2),
-      // awaited here so submitClosing never double-adds it.
-      const closing = await this.llm.prosecutionClosing({
-        prosecutorName: this.caseFile.prosecutor.name,
-        persona: this.caseFile.prosecutor.persona,
-        transcript: this.state.transcript.map((t) => `${t.speaker}: ${t.text}`).join("\n"),
-      });
-      this.addTranscript({ round: 4, speaker: "prosecutor", kind: "closing", text: closing });
+      // FINAL_READ → prosecution closing starts generating during the read
+      // (spec §13) and is awaited in submitClosing. Never rejects (null on failure).
+      this.pendingClosing = this.llm
+        .prosecutionClosing({
+          prosecutorName: this.caseFile.prosecutor.name,
+          persona: this.caseFile.prosecutor.persona,
+          transcript: this.state.transcript.map((t) => `${t.speaker}: ${t.text}`).join("\n"),
+        })
+        .then(
+          (c) => c,
+          () => null,
+        );
       this.setPhase("CLOSING");
     }
   }
@@ -406,7 +416,15 @@ export class TrialEngine {
       this.addTranscript({ round, speaker: "judge", kind: "ruling", text: JUDGE_LINES.overruled });
     }
 
-    const answer = await this.voiceAnswer({ witnessId, witness, text, examinationType, askedBy: "defense", round, callA, details });
+    const sampled = this.sampleRuling(callA);
+    details.stance = sampled.stance;
+    details.truthful = sampled.truthful;
+    details.factId = sampled.factId;
+    details.demeanor = sampled.demeanor;
+    details.stanceProbs = sampled.stanceProbs;
+    details.factProbs = sampled.factProbs;
+    const voice = await this.startVoice({ witnessId, witness, text, examinationType, askedBy: "defense", ruling: sampled });
+    const answer = this.recordAnswer({ witnessId, round, voice, factId: sampled.factId });
     if (!penalized) this.applyCleanBonus();
 
     if (inMistrialZone(this.state.judgePatience)) {
@@ -417,7 +435,7 @@ export class TrialEngine {
     }
     await this.runCallB(`${text} / ${answer}`);
     this.advanceAfterDefenseQuestion();
-    return { stricken: false, answer, details };
+    return { stricken: false, answer, details, voiceTimings: voice.timings };
   }
 
   /** P0-3 (review 02): "No further questions" ends the examination. Consumes the
@@ -488,14 +506,28 @@ export class TrialEngine {
     const claimStatus = choiceOf(callA, "claim_status").choice as ClaimStatus;
     const impropriety = IMPROPRIETY_LEVELS[scoreOf(callA, "impropriety")] as ImproprietyLevel;
     const penalized = this.applyQuestionPenalties(claimStatus, impropriety);
-    return { witnessId, text, examinationType, qEntrySeq: qEntry.seq, callA, claimStatus, impropriety, claimProbs: choiceOf(callA, "claim_status").probabilities, penalized };
+    // Review 05: sample the ruling NOW and start speculative voice immediately —
+    // it runs during the objection window. Sustained ⇒ aborted + discarded.
+    const witness = this.caseFile.witnesses.find((w) => w.id === witnessId)!;
+    const ruling = this.sampleRuling(callA);
+    const voiceCtrl = new AbortController();
+    const voice = this.startVoice({
+      witnessId, witness, text, examinationType, askedBy: "prosecutor", ruling, signal: voiceCtrl.signal,
+    });
+    // Swallow late rejections (e.g. post-sustain abort) — resolve() handles the rest.
+    voice.catch(() => null);
+    return { witnessId, text, examinationType, qEntrySeq: qEntry.seq, callA, claimStatus, impropriety, claimProbs: choiceOf(callA, "claim_status").probabilities, penalized, ruling, voice, abortVoice: () => voiceCtrl.abort() };
   }
 
   async resolveObjectionWindow(handle: ProsecutorHandle, grounds: ObjectionGrounds | null): Promise<QuestionResult> {
     this.requirePhase("resolve the objection window", "P_DIRECT", "D_CROSS");
     if (handle.witnessId !== this.state.currentWitnessId) throw new PhaseError(this.state.phase, "stale objection handle");
     const round = this.roundForPhase();
-    const details: QuestionDetails = { claimStatus: handle.claimStatus, impropriety: handle.impropriety, claimProbs: handle.claimProbs };
+    const details: QuestionDetails = {
+      claimStatus: handle.claimStatus, impropriety: handle.impropriety, claimProbs: handle.claimProbs,
+      stance: handle.ruling.stance, truthful: handle.ruling.truthful, factId: handle.ruling.factId,
+      demeanor: handle.ruling.demeanor, stanceProbs: handle.ruling.stanceProbs, factProbs: handle.ruling.factProbs,
+    };
 
     if (grounds !== null) {
       if (this.state.playerObjectionsLeft <= 0) throw new PhaseError(this.state.phase, "object (no objections left)");
@@ -511,6 +543,8 @@ export class TrialEngine {
       details.objectionGrounds = grounds;
       details.sustained = sustains;
       if (sustains) {
+        handle.abortVoice(); // Review 05: kill the speculative voice; result unused.
+        await handle.voice.catch(() => null);
         this.addTranscript({ round, speaker: "judge", kind: "ruling", text: `${JUDGE_LINES.sustained} ${JUDGE_LINES.disregard}` });
         const qEntry = this.state.transcript.find((t) => t.seq === handle.qEntrySeq)!;
         qEntry.stricken = true; // P0-2: mark in place; speculative Call A discarded, no answer.
@@ -524,16 +558,13 @@ export class TrialEngine {
       this.setPatience(applyPatience(this.state.judgePatience, this.caseFile.judge.basePatience, { kind: "overruledExcessObjection" }));
     }
 
-    const witness = this.caseFile.witnesses.find((w) => w.id === handle.witnessId)!;
-    const answer = await this.voiceAnswer({
-      witnessId: handle.witnessId, witness, text: handle.text,
-      examinationType: handle.examinationType, askedBy: "prosecutor", round, callA: handle.callA, details,
-    });
+    const voice = await handle.voice;
+    const answer = this.recordAnswer({ witnessId: handle.witnessId, round, voice, factId: handle.ruling.factId });
     if (!handle.penalized) this.applyCleanBonus();
-    if (this.checkMistrial(handle.callA)) return { stricken: false, answer, mistrial: true, details };
+    if (this.checkMistrial(handle.callA)) return { stricken: false, answer, mistrial: true, details, voiceTimings: voice.timings };
     await this.runCallB(`${handle.text} / ${answer}`);
     this.advanceAfterProsecutorQuestion();
-    return { stricken: false, answer, details };
+    return { stricken: false, answer, details, voiceTimings: voice.timings };
   }
 
   private advanceAfterProsecutorQuestion() {
@@ -553,17 +584,10 @@ export class TrialEngine {
   }
 
   // ---- shared voice step: sample ruling → LLM voices → transcript + facts ----
-  private async voiceAnswer(args: {
-    witnessId: WitnessId;
-    witness: { id: WitnessId; name: string; role: string; personality: string; speechStyle: string; relationshipToCase: string; knows: string[]; willLieAbout: { factId: string; lie: string; reason: string }[]; doesNotKnow: string; secret?: string };
-    text: string;
-    examinationType: ExaminationType;
-    askedBy: "defense" | "prosecutor";
-    round: 1 | 2 | 3 | 4;
-    callA: JevResponse;
-    details: QuestionDetails;
-  }): Promise<string> {
-    const { witnessId, witness, text, examinationType, askedBy, round, callA, details } = args;
+  private sampleRuling(callA: JevResponse): {
+    stance: string; truthful: boolean; factId: string; factStatement: string; demeanor: string;
+    stanceProbs: Record<string, number>; factProbs: Record<string, number>;
+  } {
     const stanceProbs = choiceOf(callA, "witness_stance").probabilities;
     const stance = sampleChoice(stanceProbs, this.rng);
     const truthful = sampleNoul(noulP(callA, "witness_truthful"), this.rng);
@@ -571,24 +595,35 @@ export class TrialEngine {
     const factId = sampleChoice(factProbs, this.rng);
     const demeanor = sampleChoice(choiceOf(callA, "witness_demeanor").probabilities, this.rng) || "calm";
     const fact = this.caseFile.facts.find((f) => f.id === factId);
-    details.stance = stance;
-    details.truthful = truthful;
-    details.factId = factId;
-    details.demeanor = demeanor;
-    details.stanceProbs = stanceProbs;
-    details.factProbs = factProbs;
+    return { stance, truthful, factId, factStatement: fact?.statement ?? "", demeanor, stanceProbs, factProbs };
+  }
 
-    const priorFacts = this.state.factsStatedByWitness[witnessId] ?? [];
-    const voice = await this.llm.voiceWitness({
+  private startVoice(args: {
+    witnessId: WitnessId;
+    witness: { id: WitnessId; name: string; role: string; personality: string; speechStyle: string; relationshipToCase: string; knows: string[]; willLieAbout: { factId: string; lie: string; reason: string }[]; doesNotKnow: string; secret?: string };
+    text: string;
+    examinationType: ExaminationType;
+    askedBy: "defense" | "prosecutor";
+    ruling: { stance: string; truthful: boolean; factId: string; factStatement: string; demeanor: string };
+    signal?: AbortSignal;
+  }): Promise<WitnessVoiceResult> {
+    const { witnessId, witness, text, examinationType, askedBy, ruling, signal } = args;
+    return this.llm.voiceWitness({
       witness: witness as Parameters<LLMClient["voiceWitness"]>[0]["witness"],
       knownFacts: witness.knows.map((id) => ({ id, statement: this.caseFile.facts.find((f) => f.id === id)?.statement ?? "" })),
       testimonySoFar: this.testimonySoFar(witnessId),
-      priorFactsForWitness: priorFacts,
+      priorFactsForWitness: this.state.factsStatedByWitness[witnessId] ?? [],
       questionText: text,
       askerRole: askedBy,
       examinationType,
-      ruling: { stance, truthful, factId, factStatement: fact?.statement ?? "", demeanor },
+      ruling,
+      signal,
     });
+  }
+
+  private recordAnswer(args: { witnessId: WitnessId; round: 1 | 2 | 3 | 4; voice: WitnessVoiceResult; factId: string }): string {
+    const { witnessId, round, voice, factId } = args;
+    const priorFacts = this.state.factsStatedByWitness[witnessId] ?? [];
     const ok = validateWitnessVoice(voice, factId, priorFacts);
     const answerText = ok ? voice.answer : "I... don't recall.";
     const factsStated = ok ? voice.facts_stated : [];
@@ -638,15 +673,18 @@ export class TrialEngine {
     const cut = truncateWords(text, CONFIG.MAX_WORDS_CLOSING); // Review 04 P1-4
     text = cut.text;
     // The prosecution closing was generated during the final read (readDoc).
-    // If the trial was constructed without it (tests), add the stub line.
+    // If the trial was constructed without it (tests), generate now.
     if (!this.state.transcript.some((t) => t.speaker === "prosecutor" && t.kind === "closing")) {
-      const closing = await this.llm.prosecutionClosing({
-        prosecutorName: this.caseFile.prosecutor.name,
-        persona: this.caseFile.prosecutor.persona,
-        transcript: this.state.transcript.map((t) => `${t.speaker}: ${t.text}`).join("\n"),
-      });
+      const closing =
+        (await (this.pendingClosing ?? Promise.resolve(null))) ??
+        (await this.llm.prosecutionClosing({
+          prosecutorName: this.caseFile.prosecutor.name,
+          persona: this.caseFile.prosecutor.persona,
+          transcript: this.state.transcript.map((t) => `${t.speaker}: ${t.text}`).join("\n"),
+        }));
       this.addTranscript({ round: 4, speaker: "prosecutor", kind: "closing", text: closing });
     }
+    this.pendingClosing = null;
     this.addTranscript({ round: 4, speaker: "defense", kind: "closing", text });
     const factKeys = Object.fromEntries(this.caseFile.facts.map((f) => [f.id, f.statement]));
     const [aResp, bResp] = await Promise.all([

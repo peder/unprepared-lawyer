@@ -17,8 +17,11 @@ import {
 import { renderWitnessPrompt } from "./prompts/prompts.js";
 import type { Witness } from "@shared/types.js";
 
-export const DEFAULT_VOICE_MODEL = process.env.LLM_VOICE_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
+export const DEFAULT_VOICE_MODEL = process.env.LLM_VOICE_MODEL ?? "opencode/mimo-v2.6-flash-free";
 export const DEFAULT_AUTHOR_MODEL = process.env.LLM_AUTHOR_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
+// Voice lines want minimal reasoning (a quip, not a proof). LLM_VARIANT is
+// provider-specific (e.g. "minimal"); set only when the model supports it.
+export const LLM_VARIANT = process.env.LLM_VARIANT ?? "";
 export const LLM_TIMEOUT_MS = Number(process.env.LLM_TIMEOUT_MS ?? 30000);
 // Case authoring emits large JSON (dozens of facts + witnesses); free models need minutes.
 export const AUTHOR_TIMEOUT_MS = Number(process.env.AUTHOR_TIMEOUT_MS ?? 240000);
@@ -30,6 +33,7 @@ export async function defaultOpencodeRunner({ model, prompt, timeoutMs }: { mode
   // Review 03 P2: Windows caps command lines at ~32k chars and author prompts
   // grow with the fact list — large prompts go via a temp file attachment.
   let args = ["run", "-m", model, "--format", "json", prompt];
+  if (LLM_VARIANT) args = ["run", "-m", model, "--variant", LLM_VARIANT, "--format", "json", prompt];
   let tmpFile: string | null = null;
   if (prompt.length > 24000) {
     tmpFile = join(tmpdir(), `ulaw-prompt-${Date.now()}-${Math.floor(Math.random() * 1e6)}.txt`);
@@ -190,17 +194,23 @@ export class OpencodeLLMClient implements LLMClient {
       const result = { answer: parsed.answer, stage_direction: parsed.stage_direction, facts_stated: parsed.facts_stated.filter((f) => typeof f === "string") };
       // P2-2: allowed-set = {chosen fact} ∪ facts THIS witness already stated.
       if (!validateWitnessVoice(result, ruling.factId, args.priorFactsForWitness)) {
+        // eslint-disable-next-line no-console
+        console.warn(`[llm] voice guardrail trip (stated=${result.facts_stated.join(",") || "none"} allowed=${[ruling.factId, ...args.priorFactsForWitness].join(",")}), regenerating once`);
         // Regenerate once per spec, then fall back to stub template.
         const raw2 = await this.generate(prompt + "\n\nYour facts_stated included a fact you must not state. Fix it.", this.voiceModel);
         const parsed2 = extractJson<VoiceJson>(raw2);
         const result2 = { answer: String(parsed2.answer), stage_direction: parsed2.stage_direction, facts_stated: (parsed2.facts_stated ?? []).filter((f) => typeof f === "string") };
-        if (!validateWitnessVoice(result2, ruling.factId, args.priorFactsForWitness)) return this.stub.voiceWitness(args);
+        if (!validateWitnessVoice(result2, ruling.factId, args.priorFactsForWitness)) {
+          // eslint-disable-next-line no-console
+          console.warn("[llm] voice guardrail trip twice → stub template");
+          return this.stub.voiceWitness(args);
+        }
         return result2;
       }
       return result;
-    } catch {
+    } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn("[llm] voice fallback to stub template");
+      console.warn(`[llm] voice fallback to stub template (${(e as Error)?.message?.slice(0, 160) ?? e})`);
       return this.stub.voiceWitness(args);
     }
   }
@@ -232,12 +242,6 @@ export class OpencodeLLMClient implements LLMClient {
   }
 }
 
-/** Factory: stub by default (deterministic tests); opencode when LLM_PROVIDER=opencode. */
-export function createLLMClient(runner?: OpencodeRunner): LLMClient {
-  if ((process.env.LLM_PROVIDER ?? "stub").toLowerCase() === "opencode") {
-    // eslint-disable-next-line no-console
-    console.log(`[llm] provider=opencode voice=${DEFAULT_VOICE_MODEL} author=${DEFAULT_AUTHOR_MODEL}`);
-    return new OpencodeLLMClient(DEFAULT_VOICE_MODEL, runner ?? defaultOpencodeRunner, LLM_TIMEOUT_MS);
-  }
-  return new StubLLMClient();
-}
+/** Factory: stub by default (deterministic tests); opencode CLI or Zen HTTP when selected.
+ *  Moved to ./factory.js — kept here as a deprecated re-export. */
+export { createLLMClient } from "./factory.js";

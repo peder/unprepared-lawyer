@@ -93,7 +93,8 @@ async function main() {
   // setup (and the possible Gerald fallback) before a multi-minute author.
   const { client: jev, banner: jevBanner } = createJevClient();
   const llm = createLLMClient();
-  const llmBanner = `LLM: ${(process.env.LLM_PROVIDER ?? "stub").toLowerCase() === "opencode" ? `opencode/${process.env.LLM_VOICE_MODEL ?? "muse-spark-1.3-contributor-free"}` : "stub"}`;
+  const llmProvider = (process.env.LLM_PROVIDER ?? "stub").toLowerCase();
+  const llmBanner = llmProvider === "stub" ? "LLM: stub" : `LLM: ${llmProvider}/${process.env.LLM_VOICE_MODEL ?? "default cascade"}`;
   console.log(`\n[${jevBanner} | ${llmBanner} | CASE_SOURCE=${process.env.CASE_SOURCE ?? "fixture"}]`);
   const caseFile = await generateCase();
   const eng = new TrialEngine(caseFile, jev, llm, {
@@ -307,11 +308,12 @@ function avgLean(eng: TrialEngine): number {
   return ls.reduce((a, b) => a + b, 0) / ls.length;
 }
 function logResult(what: string, r: QuestionResult, t0: number, prevAvg: number, nowAvg: number) {
-  logRecord({ kind: "result", what, stricken: r.stricken, ruling: r.ruling, mistrial: r.mistrial, answer: r.answer, details: { ...r.details } });
+  logRecord({ kind: "result", what, stricken: r.stricken, ruling: r.ruling, mistrial: r.mistrial, answer: r.answer, details: { ...r.details }, voiceTimings: r.voiceTimings });
   if (PLAY_DEBUG) {
     const d = r.details;
+    const voice = r.voiceTimings ? ` voice ${r.voiceTimings.model ?? "?"} ${r.voiceTimings.ms}ms (ttfb ${r.voiceTimings.ttfbMs ?? "?"}ms)` : " voice stub";
     console.log(
-      `  [jev ${Date.now() - t0}ms] claim=${d.claimStatus} improp=${d.impropriety} obj=${d.prosecutorObjects ? `${d.objectionGrounds}/${d.sustained ? "sustained" : "overruled"}` : "no"} stance=${d.stance ?? "-"} truthful=${d.truthful ?? "-"} fact=${d.factId ?? "-"} | jury ${prevAvg.toFixed(2)}→${nowAvg.toFixed(2)}`,
+      `  [jev ${Date.now() - t0}ms] claim=${d.claimStatus} improp=${d.impropriety} obj=${d.prosecutorObjects ? `${d.objectionGrounds}/${d.sustained ? "sustained" : "overruled"}` : "no"} stance=${d.stance ?? "-"} truthful=${d.truthful ?? "-"} fact=${d.factId ?? "-"} | jury ${prevAvg.toFixed(2)}→${nowAvg.toFixed(2)}${voice}`,
     );
   }
 }

@@ -167,9 +167,11 @@ function jevLog(model: string) {
 
 export class HttpJevClient implements JevClient {
   constructor(
-    private apiKey: string = process.env.TYPESAFE_API_KEY ?? "",
+    // Review 05 §5: JEV_ENDPOINT overrides the route (e.g. Zen systemone);
+    // key falls back from TypeSafe to the OpenCode account key.
+    private apiKey: string = process.env.TYPESAFE_API_KEY ?? process.env.OPENCODE_API_KEY ?? "",
     private model: string = process.env.JEV_MODEL ?? "jev-latest",
-    private endpoint = "https://api.typesafe.ai/v1/systemone",
+    private endpoint: string = process.env.JEV_ENDPOINT ?? "https://api.typesafe.ai/v1/systemone",
     private timeoutMs = Number(process.env.JEV_TIMEOUT_MS ?? 3000),
   ) {}
 
