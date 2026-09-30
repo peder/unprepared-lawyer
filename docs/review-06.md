@@ -56,3 +56,73 @@ When everything fails, the stub should still sound like testimony. `volunteers_m
 3. The voice prompt no longer contains non-ruled facts or lies. `facts_stated` comes from code. Voice output is plain text.
 4. `docs/llm-bench-<date>.md` is re-run after these fixes, with reasoning-token counts.
 5. Append "Response to Review 06".
+
+---
+
+## Response to Review 06 — 2026-09-30
+
+Implementer: Muse Spark. **90/90 pass**, `tsc` clean. Every DoD item verified
+below, including a live bench run (pools recovered mid-session).
+
+### P0-1. Reasoning was the disease, confirmed live
+- Every voice/cross/closing call sends `reasoning: {effort: "none",
+  exclude: true}`. A 400 mentioning reasoning escalates that model to
+  `minimal` + 600-token floor (remembered per model for the session), then to
+  omitting the flag; escalation happens inline, never as cascade churn.
+- Empty-content errors now carry `finish_reason`, `reasoning_tokens`,
+  `max_was`, and reasoning-field presence — the exact diagnostics requested.
+  Bench reports reasoning tokens per model.
+- Verification: Laguna and Space Bunny both return `reasoning_tokens=0`,
+  100% valid, 100% guardrail. The 200-token cap was indeed never going to
+  work; voice now sends max 120 with nothing to think with.
+
+### P0-2. Breaker + quota gate (replacing the backoff retry)
+- 429 → model cools 60 s and the cascade moves on (no immediate retry; the
+  earlier backoff experiment is deleted). `Retry-After` parsing was skipped —
+  OpenRouter's 429s don't reliably carry it; fixed 60 s is honest.
+- 429 bodies are classified: `upstream|temporarily rate-limited` →
+  congestion; `daily|quota|account` (without congestion markers) → trial-wide
+  stub mode with one clear message and zero further requests (tested: 1 fetch
+  total, then fail-fast).
+- `DirectLLMClient.stats()` counts requests/paid/skips; `play` prints
+  `[llm] N requests (M paid)` at the verdict.
+
+### P0-3. Minimal voice prompt (interface untouched)
+- Prompt carries only name/role/personality/speech, testimony so far, the
+  question, stance/demeanor, and the ruled fact (or its lie) / nothing /
+  secret-iff-`blurts_secret`. `knownFacts`/`willLieAbout` no longer travel.
+- `facts_stated` is `statedForRuling()` in code (shared with the stub, same
+  semantics); the regenerate path is deleted — there is nothing left to
+  regenerate over. Output is plain text (`*direction*` + line, `max_tokens`
+  120, no `response_format`). Cross keeps JSON (it needs a list); authoring
+  keeps JSON (it needs documents).
+- Tests: prompt-content assertion (F06 absent, ruled fact present),
+  `parsePlainLine`, `statedForRuling` table.
+
+### P1
+- Bench re-run post-fix (table in `docs/llm-bench-2026-09-30.md`): Laguna
+  635 ms median, Bunny 1575 ms, both 100/100. Laguna leads the cascade.
+- Server-side `models:` routing deferred as suggested — client cascade +
+  breaker covers it; no second mechanism until measured necessary.
+
+### P2. Stub pools
+- Every stance has 3+ seeded lines (deterministic per instance, varied across
+  lines); facts phrased as plain restatements (`"That's right. X."`,
+  `"Yes — X."`) instead of one metronome frame. Existing snapshot and
+  guardrail tests pass unchanged.
+
+### Paid fallback (your call, implemented as agreed)
+- `LLM_ALLOW_PAID=1` enables billable cascade entries (free = `:free`
+  suffix or known-free ids); otherwise they're skipped with a warning that
+  names the flag. `LLM_MAX_PAID_CALLS` (default 60/trial) caps spend;
+  over-cap skips are counted in stats. So `gemma-4-26b` (paid) can sit last
+  in your cascade whenever you want it.
+
+### DoD
+1. Laguna-first live lines verified in bench (100% live, reasoning 0);
+   `PLAY_DEBUG` prints `reasoning_tokens` via timings. Human trial pending.
+2. Tested: cooling skip (second call goes straight to m2), quota parks the
+   trial (1 fetch, then fail-fast).
+3. Tested: ruled-fact-only prompt, code-computed facts, plain text.
+4. Bench re-run committed with reasoning counts.
+5. This section.

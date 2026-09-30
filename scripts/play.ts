@@ -281,6 +281,10 @@ async function main() {
     reactions();
     console.log(`\n===== VERDICT: ${label(outcome)} =====`);
     console.log(outcome === "not_guilty" ? "You magnificent unprepared genius." : outcome === "guilty" ? "Disbarment speedrun." : "Transferred to another lawyer at the firm.");
+    if (typeof (llm as { stats?: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number } }).stats === "function") {
+      const s = (llm as unknown as { stats: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number } }).stats();
+      console.log(`[llm] ${s.requests} requests this trial (${s.paidAttempts} paid${s.paidSkippedOverCap ? `, ${s.paidSkippedOverCap} paid skipped over cap` : ""})`);
+    }
   } else {
     console.log(`\n===== TRIAL ENDED: ${label(eng.state.outcome)} =====`);
   }

@@ -38,12 +38,13 @@ async function main() {
   const list = models.length ? models : DEFAULTS;
   const witness = FIXTURE_CASE.witnesses[2]; // Petunia Wicks
   const fact = FIXTURE_CASE.facts.find((f) => f.id === "F05")!;
-  console.log("model | n | median ms | p95 ms | live% | guardrail% | first live answer");
+  console.log("model | n | median ms | p95 ms | live% | guardrail% | reasonTok | first live answer");
   for (const m of list) {
     const client = new DirectLLMClient(process.env.OPENROUTER_API_KEY ?? "", m, fetch, 20000);
     const ms: number[] = [];
     let live = 0;
     let guardOk = 0;
+    let reasonTok: number | null = null;
     let first = "";
     for (let i = 0; i < 3; i++) {
       if (i > 0) await sleep(8000); // free-tier rate limits
@@ -54,6 +55,7 @@ async function main() {
         ms.push(Date.now() - t0);
         if (r.timings) {
           live += 1;
+          if (reasonTok === null) reasonTok = r.timings.reasoningTokens ?? 0;
           if (r.facts_stated.includes("F05")) guardOk += 1;
           if (!first) first = r.answer.slice(0, 90);
           break;
@@ -63,7 +65,7 @@ async function main() {
       }
     }
     ms.sort((a, b) => a - b);
-    console.log(`${m} | 3 | ${Math.round(quantile(ms, 0.5))} | ${Math.round(quantile(ms, 0.95))} | ${Math.round((live / 3) * 100)} | ${Math.round((guardOk / 3) * 100)} | ${first}`);
+    console.log(`${m} | 3 | ${Math.round(quantile(ms, 0.5))} | ${Math.round(quantile(ms, 0.95))} | ${Math.round((live / 3) * 100)} | ${Math.round((guardOk / 3) * 100)} | ${reasonTok ?? "-"} | ${first}`);
   }
 }
 
