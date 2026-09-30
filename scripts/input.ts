@@ -50,6 +50,20 @@ function pump() {
   }
 }
 
+/** Non-blocking: consume one buffered line if present, else null. Powers read skip. */
+export function tryConsumeLine(): string | null {
+  const idx = buffer.indexOf("\n");
+  if (idx < 0) return null;
+  const line = buffer.slice(0, idx).replace(/\r$/, "");
+  buffer = buffer.slice(idx + 1);
+  return line;
+}
+
+/** Drop everything buffered (post-skip key mashes must not leak into prompts). */
+export function drainInput() {
+  buffer = "";
+}
+
 export function askLine(prompt: string): Promise<string> {
   if (inStream.isTTY) {
     try {

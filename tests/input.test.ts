@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { askLine, waitObjectionKey, __feedForTest, __resetForTest } from "../scripts/input.js";
+import { askLine, waitObjectionKey, tryConsumeLine, drainInput, __feedForTest, __resetForTest } from "../scripts/input.js";
 
 // Review 02 P0-1: one stdin owner. Feed chunks, assert lines + window discard.
 describe("terminal input owner", () => {
@@ -34,5 +34,17 @@ describe("terminal input owner", () => {
     __resetForTest();
     // isTTY is falsy under vitest — exercises the headless path.
     await expect(waitObjectionKey(5000)).resolves.toBe(false);
+  });
+
+  it("tryConsumeLine peeks without a waiter; drainInput drops key mashes", async () => {
+    __resetForTest();
+    expect(tryConsumeLine()).toBeNull();
+    __feedForTest("skip me\nnext\n");
+    expect(tryConsumeLine()).toBe("skip me");
+    drainInput();
+    expect(tryConsumeLine()).toBeNull();
+    const p = askLine("");
+    __feedForTest("after\n");
+    await expect(p).resolves.toBe("after");
   });
 });

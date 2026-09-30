@@ -7,7 +7,7 @@
 import "./env.js";
 import { stdin as inStream, stdout as outStream } from "process";
 import { createWriteStream, type WriteStream } from "fs";
-import { askLine, waitObjectionKey } from "./input.js";
+import { askLine, waitObjectionKey, tryConsumeLine, drainInput } from "./input.js";
 
 // --log=<file>: append a JSONL event log (every engine event, player input,
 // and per-question Jev decision) for post-trial review by another agent.
@@ -340,17 +340,28 @@ async function doRead(eng: TrialEngine, docs: { id: string; bin: string; title: 
     console.log("  (pick a doc id)");
   }
   console.log(`\n===== ${doc.bin} — ${doc.title} =====\n${doc.body}\n`);
-  // Speed read: the clock runs, no input consumed (keeps readline's buffer clean).
-  for (let i = READ_SECONDS; i > 0; i--) {
-    outStream.write(`\r  ${i}s...   `);
-    await new Promise((r) => setTimeout(r, 1000));
+  // Speed read: Enter puts it back early (TTY only — piped scripts must not desync).
+  const deadline = Date.now() + READ_SECONDS * 1000;
+  let skipped = false;
+  for (;;) {
+    const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    if (left <= 0) break;
+    outStream.write(`\r  ${left}s... (Enter puts it back)   `);
+    await new Promise((r) => setTimeout(r, 250));
+    if (TTY && tryConsumeLine() !== null) {
+      skipped = true;
+      break;
+    }
   }
   outStream.write("\r                              \r");
+  // TTY only: post-skip key mashes must not leak into prompts. Piped input is
+  // preserved byte-for-byte (draining it wipes the script's future lines).
+  if (TTY) drainInput();
   await eng.readDoc(doc.id);
   // P1-1 (review 04): the paper exists for the player only during the read.
   // Terminal can't un-print, so clear the scrollback's view of it.
   if (TTY) console.clear();
-  console.log("  (put it back.)");
+  console.log(skipped ? "  (put it back early.)" : "  (put it back.)");
 }
 
 main().catch((e) => {
