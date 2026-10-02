@@ -20,7 +20,19 @@ function quantile(sorted: number[], q: number): number {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function voiceOnce(client: DirectLLMClient, witness: (typeof FIXTURE_CASE.witnesses)[number], fact: (typeof FIXTURE_CASE.facts)[number]) {
+/** Share of fact-statement tokens appearing in the answer (review 07: verbatim%). */
+export function tokenOverlap(fact: string, answer: string): number {
+  const f = new Set(fact.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+  if (f.size === 0) return 0;
+  const a = new Set(answer.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+  let hit = 0;
+  for (const w of f) if (a.has(w)) hit += 1;
+  return hit / f.size;
+}
+
+const STANCES = ["confirms", "evasive", "denies", "rambles", "volunteers_more"] as const;
+
+async function voiceOnce(client: DirectLLMClient, witness: (typeof FIXTURE_CASE.witnesses)[number], fact: (typeof FIXTURE_CASE.facts)[number], stance: (typeof STANCES)[number]) {
   return client.voiceWitness({
     witness,
     knownFacts: [{ id: "F05", statement: fact.statement }, { id: "F06", statement: "seed trail" }],
@@ -29,7 +41,7 @@ async function voiceOnce(client: DirectLLMClient, witness: (typeof FIXTURE_CASE.
     questionText: "What did you hear that afternoon?",
     askerRole: "defense",
     examinationType: "direct_defense",
-    ruling: { stance: "confirms", truthful: true, factId: "F05", factStatement: fact.statement, demeanor: "nervous" },
+    ruling: { stance, truthful: true, factId: "F05", factStatement: fact.statement, demeanor: "nervous" },
   });
 }
 
@@ -38,34 +50,38 @@ async function main() {
   const list = models.length ? models : DEFAULTS;
   const witness = FIXTURE_CASE.witnesses[2]; // Petunia Wicks
   const fact = FIXTURE_CASE.facts.find((f) => f.id === "F05")!;
-  console.log("model | n | median ms | p95 ms | live% | guardrail% | reasonTok | first live answer");
+  console.log("model | n | median ms | p95 ms | live% | guardrail% | reasonTok | verbatim% | samples");
   for (const m of list) {
     const client = new DirectLLMClient(process.env.OPENROUTER_API_KEY ?? "", m, fetch, 20000);
     const ms: number[] = [];
     let live = 0;
     let guardOk = 0;
+    let verbatim = 0;
     let reasonTok: number | null = null;
-    let first = "";
-    for (let i = 0; i < 3; i++) {
+    const samples: string[] = [];
+    for (let i = 0; i < STANCES.length; i++) {
       if (i > 0) await sleep(8000); // free-tier rate limits
+      const stance = STANCES[i];
       const t0 = Date.now();
       // One 429 retry: free models shed load; the game path stays single-attempt.
       for (let attempt = 0; attempt < 2; attempt++) {
-        const r = await voiceOnce(client, witness, fact);
+        const r = await voiceOnce(client, witness, fact, stance);
         ms.push(Date.now() - t0);
         if (r.timings) {
           live += 1;
           if (reasonTok === null) reasonTok = r.timings.reasoningTokens ?? 0;
           if (r.facts_stated.includes("F05")) guardOk += 1;
-          if (!first) first = r.answer.slice(0, 90);
+          const overlap = tokenOverlap(fact.statement, r.answer);
+          if (overlap > 0.6) verbatim += 1;
+          samples.push(`[${stance} ${Math.round(overlap * 100)}%] ${r.answer.slice(0, 140)}`);
           break;
         }
-        if (!first) first = `(stub: ${r.answer.slice(0, 60)})`;
         await sleep(8000);
       }
     }
     ms.sort((a, b) => a - b);
-    console.log(`${m} | 3 | ${Math.round(quantile(ms, 0.5))} | ${Math.round(quantile(ms, 0.95))} | ${Math.round((live / 3) * 100)} | ${Math.round((guardOk / 3) * 100)} | ${reasonTok ?? "-"} | ${first}`);
+    console.log(`${m} | ${STANCES.length} | ${Math.round(quantile(ms, 0.5))} | ${Math.round(quantile(ms, 0.95))} | ${Math.round((live / STANCES.length) * 100)} | ${Math.round((guardOk / STANCES.length) * 100)} | ${reasonTok ?? "-"} | ${Math.round((verbatim / Math.max(1, live)) * 100)}`);
+    for (const s of samples) console.log(`  ${s}`);
   }
 }
 

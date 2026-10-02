@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { DirectLLMClient, isRetryable, HttpStatusError } from "../server/llm/DirectLLMClient.js";
-import { parsePlainLine } from "../server/llm/DirectLLMClient.js";
+import { parsePlainLine, buildFactBlock, fetchFreeModelIds, isFreeModel } from "../server/llm/DirectLLMClient.js";
 import { statedForRuling } from "../server/llm/LLMClient.js";
+import { WITNESS_STANCES } from "../shared/types.js";
 import { FIXTURE_CASE } from "../fixtures/case.fixture.js";
 
 function jsonFetch(body: unknown, status = 200) {
@@ -150,6 +151,31 @@ describe("DirectLLMClient cascade", () => {
     expect(r.answer).toBe("I heard it.");
   });
 
+  it("P2: cross parses one-question-per-line plain text", async () => {
+    const body = JSON.stringify({ choices: [{ message: { content: "1. Weren't you asleep?\n- And why should anyone believe you?" } }] });
+    const f = (async () => ({ ok: true, status: 200, text: async () => body, json: async () => JSON.parse(body) })) as unknown as typeof fetch;
+    const c = new DirectLLMClient("key", "m1:free", f, 6000);
+    const qs = await c.prosecutorCross({ prosecutorName: "P", persona: "smug", witness, transcript: "", n: 2 });
+    expect(qs).toEqual(["Weren't you asleep?", "And why should anyone believe you?"]);
+  });
+
+  it("P1-1: free/paid from live pricing, suffix fallback on failure", async () => {
+    const ok = (async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: [{ id: "a", pricing: { prompt: "0", completion: "0" } }, { id: "b", pricing: { prompt: "1", completion: "2" } }] }),
+    })) as unknown as typeof fetch;
+    expect(await fetchFreeModelIds(ok)).toEqual(new Set(["a"]));
+    expect(isFreeModel("x:free")).toBe(true);
+    expect(isFreeModel("x", new Set(["x"]))).toBe(true);
+    expect(isFreeModel("x", new Set())).toBe(false);
+    // refreshPricing failure keeps the suffix rule
+    const bad = (async () => { throw new Error("down"); }) as unknown as typeof fetch;
+    const c = new DirectLLMClient("key", "m1:free", bad, 50);
+    await c.refreshPricing();
+    await expect(c.voiceWitness(voiceArgs)).resolves.toBeDefined(); // stub fallback, no throw
+  });
+
   it("non-JSON 200 carries the raw body and cascades", async () => {
     const f = (async () => ({ ok: true, status: 200, text: async () => "Service busy, try later" })) as unknown as typeof fetch;
     const c = new DirectLLMClient("key", "m1:free", f, 6000);
@@ -158,7 +184,33 @@ describe("DirectLLMClient cascade", () => {
     expect(r.answer.length).toBeGreaterThan(0);
   });
 
-  it("P0-3: plain-text lines parse; facts_stated is computed in code", () => {
+  it("P0-1 (review 07): prompt instruction and books agree for every combination", () => {
+    const FACT = "MARKER-FACT-TEXT";
+    const LIE = "MARKER-LIE-TEXT";
+    for (const stance of WITNESS_STANCES) {
+      for (const truthful of [true, false]) {
+        for (const hasFact of [true, false]) {
+          for (const hasLie of [true, false]) {
+            const factId = hasFact ? "F01" : "none";
+            const expected = statedForRuling(stance, truthful, factId, hasLie);
+            const { text, stated } = buildFactBlock(stance, truthful, factId, FACT, hasLie ? LIE : undefined, "sekrit");
+            expect(stated).toEqual(expected);
+            if (expected.length > 0) {
+              // The told material is in the prompt…
+              expect(text).toContain(!truthful && hasLie ? LIE : FACT);
+              // …and the untold material is not.
+              expect(text).not.toContain(!truthful && hasLie ? FACT : LIE);
+            } else {
+              expect(text).not.toContain(FACT);
+              expect(text).not.toContain(LIE);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("P0-3: plain-text lines parse; statedForRuling table holds", () => {
     expect(parsePlainLine("Look, I was busy.")).toEqual({ answer: "Look, I was busy." });
     expect(parsePlainLine("*tugs lanyard* Look, I was busy.")).toEqual({ answer: "Look, I was busy.", stage_direction: "tugs lanyard" });
     expect(() => parsePlainLine("   ")).toThrow();

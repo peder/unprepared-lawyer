@@ -47,6 +47,7 @@ process.on("unhandledRejection", (e) => {
 import { TrialEngine } from "../server/trial/TrialEngine.js";
 import type { QuestionResult } from "../server/trial/TrialEngine.js";
 import { createJevClient } from "../server/jev/factory.js";
+import { DirectLLMClient } from "../server/llm/DirectLLMClient.js";
 import { visibleToPlayer } from "@shared/types.js";
 import { createLLMClient } from "../server/llm/OpencodeLLMClient.js";
 import { generateCase } from "../server/gen/generateCase.js";
@@ -96,6 +97,7 @@ async function main() {
   const llmProvider = (process.env.LLM_PROVIDER ?? "stub").toLowerCase();
   const llmBanner = llmProvider === "stub" ? "LLM: stub" : `LLM: ${llmProvider}/${process.env.LLM_VOICE_MODEL ?? "default cascade"}`;
   console.log(`\n[${jevBanner} | ${llmBanner} | CASE_SOURCE=${process.env.CASE_SOURCE ?? "fixture"}]`);
+  if (llm instanceof DirectLLMClient) await llm.refreshPricing(); // live free/paid, else suffix rule
   const caseFile = await generateCase();
   const eng = new TrialEngine(caseFile, jev, llm, {
     seed: Date.now() % 2 ** 31,
@@ -281,9 +283,10 @@ async function main() {
     reactions();
     console.log(`\n===== VERDICT: ${label(outcome)} =====`);
     console.log(outcome === "not_guilty" ? "You magnificent unprepared genius." : outcome === "guilty" ? "Disbarment speedrun." : "Transferred to another lawyer at the firm.");
-    if (typeof (llm as { stats?: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number } }).stats === "function") {
-      const s = (llm as unknown as { stats: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number } }).stats();
-      console.log(`[llm] ${s.requests} requests this trial (${s.paidAttempts} paid${s.paidSkippedOverCap ? `, ${s.paidSkippedOverCap} paid skipped over cap` : ""})`);
+    if (typeof (llm as { stats?: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number; perModel: Record<string, number> } }).stats === "function") {
+      const s = (llm as unknown as { stats: () => { requests: number; paidAttempts: number; paidSkippedOverCap: number; perModel: Record<string, number> } }).stats();
+      const split = Object.entries(s.perModel).map(([m, n]) => `${m} ${n}`).join(", ") || "stub only";
+      console.log(`[llm] ${s.requests} requests this trial (${s.paidAttempts} paid${s.paidSkippedOverCap ? `, ${s.paidSkippedOverCap} paid skipped over cap` : ""}; per model: ${split})`);
     }
   } else {
     console.log(`\n===== TRIAL ENDED: ${label(eng.state.outcome)} =====`);

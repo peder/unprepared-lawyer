@@ -19,22 +19,41 @@ export const DEFAULT_VOICE_MODEL =
   process.env.LLM_VOICE_MODEL ??
   "poolside/laguna-xs-2.1:free,stealth/space-bunny-alpha,google/gemma-4-26b-a4b-it:free,liquid/lfm-2.5-2.6b:free";
 // Paid-model guardrail: billable models are attempted only with LLM_ALLOW_PAID=1.
-// Free = :free suffix or known-free ids (some free models carry no suffix).
-// LLM_MAX_PAID_CALLS caps paid attempts per client instance (one trial).
+// Free = live OpenRouter pricing (prompt AND completion are "0"), falling back
+// to the :free-suffix rule when the models list can't be fetched (P1-1).
 export function allowPaid(): boolean {
   return process.env.LLM_ALLOW_PAID === "1";
 }
 export const MAX_PAID_CALLS = Number(process.env.LLM_MAX_PAID_CALLS ?? 60);
-const KNOWN_FREE_IDS = new Set(["stealth/space-bunny-alpha", "big-pickle", "openrouter/free"]);
 
-export function isFreeModel(id: string): boolean {
-  return id.endsWith(":free") || KNOWN_FREE_IDS.has(id);
+interface OpenRouterModel {
+  id: string;
+  pricing?: { prompt?: string; completion?: string };
+}
+
+/** Review 07 P1-1: free/paid from live pricing, not a hardcoded list. */
+export async function fetchFreeModelIds(fetchFn: DirectFetch = fetch, baseUrl: string = OPENROUTER_BASE_URL): Promise<Set<string>> {
+  const res = await fetchFn(`${baseUrl}/models`);
+  if (!res.ok) throw new Error(`models list HTTP ${res.status}`);
+  const json = (await res.json()) as { data?: OpenRouterModel[] };
+  const free = new Set<string>();
+  for (const m of json.data ?? []) {
+    if (m.pricing?.prompt === "0" && m.pricing?.completion === "0") free.add(m.id);
+  }
+  return free;
+}
+
+export function isFreeModel(id: string, freeSet?: Set<string>): boolean {
+  if (freeSet) return freeSet.has(id);
+  return id.endsWith(":free");
 }
 
 export interface LlmStats {
   requests: number;
   paidAttempts: number;
   paidSkippedOverCap: number;
+  /** Successful answers per short model id (P2: how often the cascade fell through). */
+  perModel: Record<string, number>;
 }
 export const DEFAULT_AUTHOR_MODEL = process.env.LLM_AUTHOR_MODEL ?? "opencode/muse-spark-1.3-contributor-free";
 
@@ -150,6 +169,61 @@ export function classify429(body: string): "provider" | "account" {
   return "provider"; // conservative: congestion, not quota
 }
 
+/** Review 07 P0-1: prompt instruction derived from the SAME stated decision the
+ *  books record. The caller records `stated`; the model only ever sees `text`. */
+export function buildFactBlock(
+  stance: string,
+  truthful: boolean,
+  factId: string,
+  factStatement: string,
+  lie?: string,
+  secret?: string,
+): { text: string; stated: string[] } {
+  const stated = statedForRuling(stance, truthful, factId, lie !== undefined);
+  if (stated.length > 0) {
+    // P0-2: first-person testimony, never a verbatim repeat.
+    const material = !truthful && lie !== undefined ? `this lie as if it were true: "${lie}"` : `this fact: "${factStatement}"`;
+    return {
+      stated,
+      text: `Work ${material} into your answer, told from your own point of view (first person — you were there), in your speech style. Do not repeat it word for word.`,
+    };
+  }
+  if (stance === "blurts_secret" && secret) {
+    return { stated, text: `Say something unrelated and off-topic about yourself — something like: ${secret}. Nothing about the case.` };
+  }
+  return { stated, text: NO_FACT_INSTRUCTIONS[stance] ?? "Answer without revealing any case facts." };
+}
+
+const NO_FACT_INSTRUCTIONS: Record<string, string> = {
+  doesnt_know: "You don't know or didn't see. Say so briefly, without revealing anything.",
+  evasive: "Dodge the question without revealing anything.",
+  rambles: "Go off on a tangent; circle near an answer without stating any evidence.",
+  contradicts_self: "Say something inconsistent with your earlier testimony, without introducing new evidence.",
+  blurts_secret: "Say something unrelated and off-topic about yourself. Nothing about the case.",
+  denies: "Reject the question's premise flatly, without adding new facts.",
+};
+
+const STANCE_DESCRIPTIONS: Record<string, string> = {
+  // Same content as STANCE_CRITERIA in jev/calls (duplicated to keep the
+  // voice client import-light; test asserts they stay in sync).
+  confirms: "agrees with what the question suggests",
+  partially_confirms: "agrees with part of it, with a complication",
+  denies: "disagrees",
+  doesnt_know: "doesn't know or didn't see",
+  evasive: "dodges the question",
+  rambles: "goes off on a tangent, eventually gets near an answer",
+  volunteers_more: "answers and adds something the asker didn't ask for",
+  contradicts_self: "says something inconsistent with earlier testimony",
+  blurts_secret: "says something unrelated and off-topic about themselves (rare)",
+};
+
+// P0-2: generic invented witness — imitate the manner, never the content.
+const FEWSHOTS = `EXAMPLES (a different, invented witness — imitate the manner, not the content):
+CONFIRMS — Gus the parking attendant, asked if the lot was full:
+"*wipes brow* Full? I was turning cars away by eight, I swear it."
+EVASIVE — same Gus, asked where the money went:
+"Money? Buddy, I handle cars, not cash. Next question."`;
+
 export class DirectLLMClient implements LLMClient {
   private stub = new StubLLMClient();
   /** Voice cascade: comma-separated LLM_VOICE_MODEL tries each in order on retryable failures. */
@@ -157,11 +231,14 @@ export class DirectLLMClient implements LLMClient {
   private paidUsed = 0;
   private requestCount = 0;
   private paidSkipped = 0;
+  private perModel = new Map<string, number>();
   /** Circuit breaker: model → cool-until timestamp. */
   private cooling = new Map<string, number>();
   /** Account quota exhausted: skip all requests, straight to stub with one message. */
   private quotaExhausted: string | null = null;
   private quotaWarned = false;
+  /** Live pricing cache (null = suffix-rule fallback). Refreshed at startup. */
+  private freeSet: Set<string> | null = null;
   constructor(
     private apiKey: string = process.env.OPENROUTER_API_KEY ?? "",
     voiceModel: string = DEFAULT_VOICE_MODEL,
@@ -181,9 +258,27 @@ export class DirectLLMClient implements LLMClient {
     }
   }
 
+  /** Review 07 P1-1: refresh free/paid from live pricing. Falls back silently. */
+  async refreshPricing(): Promise<void> {
+    try {
+      this.freeSet = await fetchFreeModelIds(this.fetchFn, this.baseUrl);
+    } catch {
+      this.freeSet = null;
+    }
+  }
+
+  private isFree(id: string): boolean {
+    return isFreeModel(id, this.freeSet ?? undefined);
+  }
+
   /** Per-trial usage counters (Review 06 P0-2: print at verdict). */
   stats(): LlmStats {
-    return { requests: this.requestCount, paidAttempts: this.paidUsed, paidSkippedOverCap: this.paidSkipped };
+    return {
+      requests: this.requestCount,
+      paidAttempts: this.paidUsed,
+      paidSkippedOverCap: this.paidSkipped,
+      perModel: Object.fromEntries(this.perModel),
+    };
   }
 
   /** Raw completion shared by voice/cross/closing; also backs authorCase().
@@ -201,7 +296,7 @@ export class DirectLLMClient implements LLMClient {
       return err;
     };
     for (const model of models) {
-      const paid = !isFreeModel(model);
+      const paid = !this.isFree(model);
       if (paid && !allowPaid()) continue; // warned in constructor; never billed by accident
       if (paid && this.paidUsed >= MAX_PAID_CALLS) {
         this.paidSkipped += 1;
@@ -213,12 +308,13 @@ export class DirectLLMClient implements LLMClient {
       if (remaining <= 0) throw fail(new Error("direct llm: budget exhausted"));
       if (opts.signal?.aborted) throw opts.signal.reason ?? new Error("aborted");
       const a0 = Date.now();
-      try {
-        this.requestCount += 1;
-        if (paid) this.paidUsed += 1;
-        const r = await this.attempt({ ...opts, model, timeoutMs: remaining });
-        return { ...r, ms: Date.now() - t0 };
-      } catch (e) {
+        try {
+          this.requestCount += 1;
+          if (paid) this.paidUsed += 1;
+          const r = await this.attempt({ ...opts, model, timeoutMs: remaining });
+          this.perModel.set(shortModel(model), (this.perModel.get(shortModel(model)) ?? 0) + 1);
+          return { ...r, ms: Date.now() - t0 };
+        } catch (e) {
         if (/aborted|abort/i.test((e as Error)?.message ?? "") || (e as Error)?.name === "AbortError") throw e;
         attempts.push({ model: shortModel(model), error: shortReason(e), ms: Date.now() - a0 });
         if (process.env.PLAY_DEBUG === "1") {
@@ -338,33 +434,32 @@ export class DirectLLMClient implements LLMClient {
   }): Promise<WitnessVoiceResult> {
     const t0 = Date.now();
     const { witness, ruling } = args;
-    // Review 06 P0-3: the prompt carries ONLY the ruled fact (or its lie) —
-    // never the full known-facts list, other lies, or unrelated secrets.
-    // facts_stated is computed in code; the model returns one plain spoken line.
+    // Review 07 P0-1: ONE source of truth. Code decides what's stated first;
+    // the prompt instruction is derived from that same decision, so the model
+    // is never told to say a fact the books record as silence (or vice versa).
     const lie = witness.willLieAbout.find((l) => l.factId === ruling.factId);
-    const factBlock =
-      ruling.factId === "none" || ruling.stance === "doesnt_know"
-        ? "Reveal NO facts. Dodge, ramble, or say you don't recall — stay consistent with TESTIMONY unless stance is contradicts_self."
-        : !ruling.truthful && lie
-          ? `Draw on this lie as if it were true: "${lie.lie}"`
-          : `State this fact in your own spoken words: "${ruling.factStatement}"`;
+    const hasLie = Boolean(lie);
+    const { text: factText, stated } = buildFactBlock(ruling.stance, ruling.truthful, ruling.factId, ruling.factStatement, lie?.lie, witness.secret);
     const system = [
       `You are voicing ${witness.name} (${witness.role}) on the stand in a comedy courtroom game.`,
       `Personality: ${witness.personality}`,
       `Speech style: ${witness.speechStyle}`,
+      `Relationship to the case: ${witness.relationshipToCase}`,
       `Doesn't know about: ${witness.doesNotKnow}`,
-      ...(ruling.stance === "blurts_secret" && witness.secret ? [`SECRET ( blurt something like this, unrelated to the case): ${witness.secret}`] : []),
+      `Demeanor right now: ${ruling.demeanor}.`,
       ``,
       `TESTIMONY SO FAR (this witness):`,
       args.testimonySoFar || "(none yet)",
       ``,
       `CURRENT QUESTION from ${args.askerRole} (${args.examinationType}): "${args.questionText}"`,
-      `RULING — stance: ${ruling.stance}; demeanor: ${ruling.demeanor}.`,
-      factBlock,
+      `RULING — stance: ${ruling.stance} (${STANCE_DESCRIPTIONS[ruling.stance] ?? ruling.stance}).`,
+      factText,
       `If the question contains a false premise, accept or reject it only as the stance dictates.`,
       `Answer in 1-2 short sentences, spoken lines only. Plain text — no JSON, no narration, no fact IDs.`,
       `Optional: start with *a few words of stage direction* in asterisks.`,
       `PG-13. Funny through character, never breaking the fourth wall.`,
+      ``,
+      FEWSHOTS,
     ].join("\n");
     const remaining = () => this.voiceBudgetMs - (Date.now() - t0);
     try {
@@ -374,7 +469,7 @@ export class DirectLLMClient implements LLMClient {
       return {
         answer,
         stage_direction,
-        facts_stated: statedForRuling(ruling.stance, ruling.truthful, ruling.factId, Boolean(lie)),
+        facts_stated: stated,
         timings,
       };
     } catch (e) {
@@ -387,17 +482,23 @@ export class DirectLLMClient implements LLMClient {
 
   async prosecutorCross(args: { prosecutorName: string; persona: string; witness: Witness; transcript: string; n: number; signal?: AbortSignal }): Promise<string[]> {
     try {
+      // P2 (review 07): plain text, one question per line — the last JSON parse on the live path.
       const raw = await this.complete({
-        system: `You are ${args.prosecutorName}, the prosecutor in a comedy courtroom game. Persona: ${args.persona}. Competent, prepared, slightly smug. PG-13. OUTPUT JSON ONLY, exactly: {"questions": ["...", "..."]}`,
-        user: `Transcript so far: ${args.transcript || "(none)"}. Write ${args.n} one-sentence (≤25 words) cross-examination questions for ${args.witness.name} (${args.witness.role}) undermining the defense.`,
+        system: `You are ${args.prosecutorName}, the prosecutor in a comedy courtroom game. Persona: ${args.persona}. Competent, prepared, slightly smug. PG-13.`,
+        user: `Transcript so far: ${args.transcript || "(none)"}. Write exactly ${args.n} cross-examination questions for ${args.witness.name} (${args.witness.role}) undermining the defense. Rules: one question per line, one sentence each, ≤25 words, answerable by the witness. No numbering, no bullets, no JSON, no commentary.`,
         maxTokens: 150,
         temperature: 0.7,
         timeoutMs: this.voiceBudgetMs,
         signal: args.signal,
+        plainText: true,
       });
-      const parsed = extractJson<{ questions: unknown }>(raw.text);
-      if (!Array.isArray(parsed.questions) || !parsed.questions.every((q) => typeof q === "string")) throw new Error("bad cross JSON");
-      return (parsed.questions as string[]).slice(0, args.n);
+      const lines = raw.text
+        .split("\n")
+        .map((s) => s.trim().replace(/^(\d+[.)]|[-*])\s+/, "").trim())
+        .filter((s) => s.length > 0);
+      const questions = lines.slice(0, args.n);
+      if (questions.length === 0) throw new Error("bad cross text: no questions");
+      return questions;
     } catch (e) {
       if (/aborted|abort/i.test((e as Error)?.message ?? "")) throw e;
       // eslint-disable-next-line no-console

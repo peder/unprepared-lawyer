@@ -40,11 +40,15 @@ Keys live in a local `.env` (gitignored, auto-loaded by scripts). Never commit o
 
 ## Data terms (free models)
 
-Case content is fictional, but know the terms: most OpenRouter free-tier
-providers may log prompts during the free period; Space Bunny / LongCat
-follow zero-retention policies. Muse Spark Contributor content may be used
-for training. Jev inputs are not used for training (TypeSafe privacy
-policy). See `docs/llm-bench-2026-09-30.md` and opencode.ai/docs/zen#privacy.
+Case content is fictional, but know the terms: OpenRouter does not train on
+your prompts, but **model providers vary** — many free models log prompts and
+completions and may use them for training (see openrouter.ai/openrouter/free
+and each provider's policy). Correction: an earlier README/commit called
+Space Bunny "zero-retention" — that was Zen's route-specific claim and is
+**unverified on OpenRouter**; assume logging until a provider says otherwise.
+Muse Spark Contributor content may be used for training. Jev inputs are not
+used for training (TypeSafe privacy policy). See
+`docs/llm-bench-2026-09-30.md` and opencode.ai/docs/zen#privacy.
 
 ## Docs
 
